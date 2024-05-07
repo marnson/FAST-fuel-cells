@@ -82,4 +82,30 @@ set.LP_Heat_mat = LP_Heat_mat;
 
 save FC_data
 
+%%
+clear; clc; 
+
+load('+FuelCellPkg\+FCDataPkg\FC_data.mat')
+
+FC_Data.FCmap_drag   = FCmap_drag    ;  
+FC_Data.LP_Eff_mat   = LP_Eff_mat    ;  
+FC_Data.MP_Eff_mat   = MP_Eff_mat    ;  
+FC_Data.MP_h_rng     = MP_h_rng      ;  
+FC_Data.set          = set           ;  
+FC_Data.FCmap_eff    = FCmap_eff     ;  
+FC_Data.LP_Heat_mat  = LP_Heat_mat   ;  
+FC_Data.MP_Heat_mat  = MP_Heat_mat   ;  
+FC_Data.Wanted_FC    = Wanted_FC     ;  
+FC_Data.weight       = weight        ;  
+FC_Data.FCmap_heat   = FCmap_heat    ;  
+FC_Data.LP_Wlb_mat   = LP_Wlb_mat    ;  
+FC_Data.MP_M_rng     = MP_M_rng      ;  
+FC_Data.Wanted_Value = Wanted_Value  ;  
+FC_Data.LP_Drag_mat  = LP_Drag_mat   ;  
+FC_Data.MP_Drag_mat  = MP_Drag_mat   ;  
+FC_Data.MP_Wlb_mat   = MP_Wlb_mat    ;  
+FC_Data.fc           = fc       ; 
+
+save('+FuelCellPkg/+FCDataPkg/FuelCellMaps.mat','FC_Data')
+
 end

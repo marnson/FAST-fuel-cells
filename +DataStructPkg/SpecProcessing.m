@@ -617,6 +617,9 @@ Aircraft.Geometry = Geometry;
 Aircraft.HistData.AC = DataAC;
 Aircraft.HistData.Eng = DataEngine;
 
+load('+FuelCellPkg/+FCDataPkg/FuelCellMaps.mat')
+Aircraft.HistData.FC = FC_Data;
+
 %% Engine Specs
 
 EngineFlags = Aircraft.Specs.Propulsion.PropArch.PSType == 1;
