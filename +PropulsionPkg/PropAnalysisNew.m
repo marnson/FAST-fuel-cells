@@ -590,13 +590,13 @@ if any(FC)
         for ipnt = 1:(npnt-1)
 
             % size the engine at that point
-            SizedFC = Elias_Function(FC_File, Alt(ipnt), MTemp(ipnt), PTemp(ipnt));
+            LH2_Consumption = FuelCellPkg.OffDesignFC(Aircraft, PTemp(ipnt), Alt(ipnt), MTemp(ipnt));
 
             % get out the SFC (could be TSFC or BSFC)
             SFC(ipnt, icol) = NaN;
 
             % get the fuel flow
-            MDotFuel(ipnt, icol) = SizedFC.Performance * Aircraft.Specs.Propulsion.MDotCF;
+            MDotFuel(ipnt, icol) = LH2_Consumption * Aircraft.Specs.Propulsion.MDotCF;
 
             % Get the engine exit mach number (of each engine)
             ExitMach(ipnt, icol) = NaN;
