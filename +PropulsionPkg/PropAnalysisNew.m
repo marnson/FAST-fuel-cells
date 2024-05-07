@@ -180,6 +180,7 @@ end
 % get the types of power sources
 Eng = PSType == +1;
 EM  = PSType ==  0;
+FC  = PSType == +2;
 
 % get the types of energy sources
 Fuel = ESType == 1;
@@ -402,7 +403,7 @@ if (any(Batt))
 end
 
 % check for fuel
-if (any(Fuel))
+if (any(Eng))
     
     % check the aircraft class
     if      (strcmpi(aclass, "Turbofan" ) == 1)
@@ -556,6 +557,103 @@ if (any(Fuel))
     % compute the fuel energy remaining
     Eleft_ES(2:end, Fuel) = Eleft_ES(1, Fuel) - cumsum(dEfuel);
 
+end
+
+
+if any(FC)
+
+
+
+
+
+
+
+    
+    % get the indices of the engines
+    HasFC = find(FC);
+    
+    % loop through the engines
+    for ifc = 1:length(HasFC)
+        
+        % get the column index
+        icol = HasFC(ifc);
+                
+
+    
+
+       
+            
+
+            
+            % temporary power required
+            PTemp = PoutPS(ibeg:iend, icol);
+            
+            % any required power  < 1 must be rounded up to 5% SLS power
+            %PTemp(PTemp < 1) = 0.05 * Aircraft.Specs.Power.SLS;
+            
+
+    
+        % temporary mach number
+        MTemp = Mach(ibeg:iend);
+        
+        % any mach number < 0.05 must be rounded up to 0.05
+        MTemp(Mach < 0.05) = 0.05;
+        
+        % get altitudes
+        Alt = Alt(ibeg:iend);
+                
+        % compute the SFC as a function of thrust required
+        for ipnt = 1:(npnt-1)
+            
+
+            
+            % size the engine at that point
+            SizedFC = Elias_Function(FC_File, Alt(ipnt), MTemp(ipnt), PTemp(ipnt));
+            
+            % get out the SFC (could be TSFC or BSFC)
+            SFC(ipnt, icol) = NaN;
+            
+            % get the fuel flow
+            MDotFuel(ipnt, icol) = SizedFC.Performance * Aircraft.Specs.Propulsion.MDotCF;
+            
+            % Get the engine exit mach number (of each engine)
+            ExitMach(ipnt, icol) = NaN;
+            
+            % get the engine fan diamater (single engine)
+            FanDiam(ipnt, icol) = NaN;
+            
+            % get the air mass flow through (one) of the engines
+            MDotAir(ipnt, icol) = NaN;
+            
+        end                
+    end
+        
+    % compute the mass flow into all power sources
+    dmdt = MDotFuel * SplitPSES;
+    
+    % compute the power from the energy source
+    dEdt = dmdt(:, Fuel) .* efuel;
+    
+    % compute the fuel burn at each point
+    dFburn = dmdt(1:end-1, Fuel) .* dt;
+    
+    % compute the energy expended at each control point
+    dEfuel = dEdt(1:end-1) .* dt;
+    
+    % track the cumulative fuel burn
+    CumFburn = cumsum(dFburn);
+    
+    % compute the cumulative fuel burn
+    Fburn(2:end) = Fburn(1) + CumFburn;
+    
+    % update the aircraft's mass
+    Mass( 2:end) = Mass( 1) - CumFburn;
+        
+    % compute the fuel energy consumed
+    E_ES(    2:end, Fuel) = E_ES(2:end, Fuel) + cumsum(dEfuel);
+    
+    % compute the fuel energy remaining
+    Eleft_ES(2:end, Fuel) = Eleft_ES(1, Fuel) - cumsum(dEfuel);
 end
 
 % remember the power provided by the energy sources

@@ -398,7 +398,7 @@ switch TLAR.Class
         if TLAR.MaxPax > 200 % CHANGE THIS LATER/ find exact pax count
             DefaultGeometry.Preset = @(ACStruct)VisualizationPkg.GeometrySpecsPkg.LargeTurbofan(ACStruct);
         elseif TLAR.MaxPax > 100
-            DefaultGeometry.Preset = @(ACStruct)VisualizationPkg.GeometrySpecsPkg.SmallDoubleAisleTurbofan(ACStruct); 
+            DefaultGeometry.Preset = @(ACStruct)VisualizationPkg.GeometrySpecsPkg.SmallDoubleAisleTurbofan(ACStruct);
         else
             DefaultGeometry.Preset = @(ACStruct)VisualizationPkg.GeometrySpecsPkg.Transport(ACStruct);
         end
@@ -619,7 +619,13 @@ Aircraft.HistData.Eng = DataEngine;
 
 %% Engine Specs
 
-Aircraft = DataStructPkg.EngineSpecProcessing(Aircraft);
+EngineFlags = Aircraft.Specs.Propulsion.PropArch.PSType == 1;
+
+if any(EngineFlags)
+    Aircraft = DataStructPkg.EngineSpecProcessing(Aircraft);
+else
+    Aircraft.Specs.Propulsion.Engine = "Nonexistent";
+end
 
 
 end
