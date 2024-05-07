@@ -184,6 +184,8 @@ Aircraft.Specs.Propulsion.Thrust.SLS = NaN;
 % engine propulsive efficiency
 Aircraft.Specs.Propulsion.Eta.Prop = NaN;
 
+Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
+
 
 %% POWER %%
 %%%%%%%%%%%
