@@ -293,6 +293,7 @@ while (iter < MaxIter)
     Wbatt = Wbatt + dWbatt;
     Wpax  = Aircraft.Specs.Weight.Payload;
     Wcrew = Aircraft.Specs.Weight.Crew;
+    Wfuelcell = Aircraft.Specs.Weight.FuelCells;
     
     % remember the new weights
     Aircraft.Specs.Weight.MTOW = mtow_new;
@@ -301,7 +302,7 @@ while (iter < MaxIter)
 
     % compute the OEW when sizing
     if (Type > -2)
-        Aircraft.Specs.Weight.OEW  = mtow_new - sum(Wfuel) - sum(Wbatt) - Wpax - Wcrew;
+        Aircraft.Specs.Weight.OEW  = mtow_new - sum(Wfuel) - sum(Wbatt) - Wpax - Wcrew - sum(Wfuelcell);
     end
     
     % remember the OEW and wing area
@@ -320,6 +321,7 @@ while (iter < MaxIter)
     fprintf(1, "    Wfuel = %.6e lbm   \n", UnitConversionPkg.ConvMass(Wfuel   , "kg", "lbm")    );
     fprintf(1, "    Wem   = %.6e lbm   \n", UnitConversionPkg.ConvMass(Wem     , "kg", "lbm")    );
     fprintf(1, "    Weg   = %.6e lbm   \n", UnitConversionPkg.ConvMass(Weg     , "kg", "lbm")    );
+    fprintf(1, "    Wfc   = %.6e lbm   \n", UnitConversionPkg.ConvMass(Wfuelcell, "kg", "lbm")    );
     fprintf(1, "    S     = %.6e ft^2\n\n", S * UnitConversionPkg.ConvLength(1 , "m" , "ft" ) ^ 2);
     
     % iterate

@@ -41,6 +41,7 @@ TkoVel = Aircraft.Specs.Performance.Vels.Tko;
 % find the engines and electric motors
 Eng = Aircraft.Specs.Propulsion.PropArch.PSType == 1;
 EM  = Aircraft.Specs.Propulsion.PropArch.PSType == 0;
+FC  = Aircraft.Specs.Propulsion.PropArch.PSType == 2;
 
 % get the electric motor power-weight ratio
 P_Wem = Aircraft.Specs.Power.P_W.EM;
@@ -175,7 +176,7 @@ Aircraft.Specs.Propulsion.SLSPower = Power;
 Aircraft.Specs.Propulsion.SLSThrust = Thrust;
 
 % check for a fully-electric architecture (so engines don't get sized)
-if (any(PSType > 0))
+if (any(PSType == 1))
 
     % lapse thrust/power for turbofan/turboprops, respectively
     if      (strcmpi(aclass, "Turbofan" ) == 1)
@@ -226,8 +227,27 @@ else
 
 end
 
+if (any(PSType == 2))
+    
+    % where FC = PSType == 2
+    HasFC = find(FC);
+    
+    % loop through the engines
+    for ifc = 1:length(HasFC)
+        % size fuel cell (on design) with design point and max power
+        Wfc = 400;
+    end
+    
+else
+
+    % no fuel cells get sized
+    Wfc = 0;
+
+end
+
 % remember the weight of the engines
 Aircraft.Specs.Weight.Engines = sum(Weng);
+Aircraft.Specs.Weight.FuelCells = sum(Wfc);
 
 % check if the electric motor weight can be changed and remember it
 if (atype > 0)

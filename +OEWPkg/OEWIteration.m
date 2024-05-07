@@ -46,6 +46,10 @@ Wem   = Aircraft.Specs.Weight.EM     ;
 Wpax  = Aircraft.Specs.Weight.Payload;
 Wcrew = Aircraft.Specs.Weight.Crew   ;
 Weng  = Aircraft.Specs.Weight.Engines;
+Wfc   = Aircraft.Specs.Weight.FuelCells;
+
+% Fuel Cell Flag
+FC = Aircraft.Specs.Propulsion.PropArch.PSType == 2;
 
 % check for a calibration factor on OEW/airframe weight
 if (isfield(Aircraft.Specs.Weight, "WairfCF"))
@@ -105,7 +109,7 @@ switch Class
             WframeOld = WframeNew;
             
             % compute MTOW
-            MTOW = WframeOld + Wfuel + Wbatt + Wpax + Wcrew + Wem + Weg + Weng;
+            MTOW = WframeOld + Wfuel + Wbatt + Wpax + Wcrew + Wem + Weg + Weng + Wfc;
             
             % get the necessary thrust and wing area
             T = MTOW * T_W * g;
@@ -120,11 +124,14 @@ switch Class
             % get the new engine weights
             WengNew = Aircraft.Specs.Weight.Engines;
             
-            % get the new eelectric motor weights
+            % get the new electric motor weights
             WemNew = Aircraft.Specs.Weight.EM;
+
+            % get new fuel cell weights
+            WfcNew = Aircraft.Specs.Weight.FuelCells;
                         
             % modify MTOW
-            MTOW = MTOW + WengNew - Weng + WemNew - Wem;
+            MTOW = MTOW + WengNew - Weng + WemNew - Wem + WfcNew - Wfc;
                         
             % list the targets for the airframe weight estimation
             target = [S, T, EIS, MTOW];
@@ -139,6 +146,13 @@ switch Class
              % estimate the new airframe weight with a regression
             WframeNew = RegressionPkg.NLGPR(TurbofanAC, IO, target, [1 1 0.2 1]);
 
+            if any(FC) % Modify Frame weight if fuel cells
+                Vtank = Wfuel*120e6/43e6/800*UnitConversionPkg.ConvLength(1,'m','ft')^3; % in feet
+                WconvTank = 2.405*Vtank^0.606;      
+                WH2Tank = Wfuel*0.7;
+                WframeNew = WframeNew - WconvTank + WH2Tank;               
+            end
+
             % update the airframe weight with a calibration factor
             WframeNew = WframeNew * FrameCF;
             
@@ -151,6 +165,7 @@ switch Class
             % remember the power source weights
             Weng = WengNew;
             Wem  =  WemNew;
+            Wfc  =  WfcNew;
             
         end
       
@@ -187,7 +202,7 @@ switch Class
             WframeOld = WframeNew;
             
             % compute MTOW
-            MTOW = WframeOld + Wfuel + Wbatt + Wpax + Wcrew + Wem + Weg + Weng;
+            MTOW = WframeOld + Wfuel + Wbatt + Wpax + Wcrew + Wem + Weg + Weng + Wfc;
             
             % get the necessary power and wing area
             P = MTOW * P_W;
@@ -202,14 +217,24 @@ switch Class
             % get the new engine weights
             WengNew = Aircraft.Specs.Weight.Engines;
             
-            % get the new eelectric motor weights
+            % get the new electric motor weights
             WemNew = Aircraft.Specs.Weight.EM;
+
+            % get new fuel cell weights
+            WfcNew = Aircraft.Specs.Weight.FuelCells;
             
             % modify MTOW
-            MTOW = MTOW + WengNew - Weng + WemNew - Wem;
+            MTOW = MTOW + WengNew - Weng + WemNew - Wem + WfcNew - Wfc;
             
             % compute the new airframe weight
             WframeNew = polyval(Airframe_f_of_MTOW, MTOW);
+
+            if any(FC) % Modify Frame weight if fuel cells
+                Vtank = Wfuel*120e6/43e6/800*UnitConversionPkg.ConvLength(1,'m','ft')^3; % in feet
+                WconvTank = 2.405*Vtank^0.606;      
+                WH2Tank = Wfuel*0.7;
+                WframeNew = WframeNew - WconvTank + WH2Tank;               
+            end
             
             % update the airframe weight with a calibration factor
             WframeNew = WframeNew * FrameCF;
@@ -223,6 +248,7 @@ switch Class
             % remember the new power source weights
             Weng = WengNew;
             Wem  =  WemNew;
+            Wfc  =  WfcNew;
             
         end
         
