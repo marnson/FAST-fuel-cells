@@ -113,7 +113,7 @@ dt = diff(Time);
 
 % get the number of control points in the segment
 npnt = length(Time);
-    
+
 % note the beginning/ending elements
 ibeg =        1;
 iend = npnt - 1;
@@ -152,19 +152,19 @@ Eleft_ES = Aircraft.Mission.History.SI.Energy.Eleft_ES(SegBeg:SegEnd, :);
 
 % fill first element if there is a mission history
 if (SegBeg > 1)
-    
+
     % get the fuel burn
     Fburn = repmat(Aircraft.Mission.History.SI.Weight.Fburn(SegBeg), npnt, 1);
-    
+
     % get the energy expended by all energy sources
     E_ES = repmat(Aircraft.Mission.History.SI.Energy.E_ES(SegBeg, :), npnt, 1);
-    
+
     % check for a detailed battery model
     if (DetailedBatt == 1)
-    
+
         % get SOC from the mission history
         SOC = repmat(Aircraft.Mission.History.SI.Power.SOC(SegBeg, :), npnt, 1);
-        
+
     end
 end
 
@@ -211,33 +211,33 @@ PreqES = zeros(npnt, nes);
 
 % loop through points to get power outputs by thrust/power sources
 for ipnt = 1:npnt
-    
+
     % if the power required is infinitely large, return infinity
     if (isinf(Preq(ipnt)))
-        
+
         % the power/thrust sources must provide infinite power
         PreqTS(ipnt, :) = Inf;
         PreqPS(ipnt, :) = Inf;
-        
+
         % no need to multiply matrices, so continue on
         continue;
-        
+
     end
-    
+
     % evaluate the function handles for the current splits
     SplitTS   = PropulsionPkg.EvalSplit(OperTS  , LamTS(  ipnt, :));
     SplitTSPS = PropulsionPkg.EvalSplit(OperTSPS, LamTSPS(ipnt, :));
     SplitPSPS = PropulsionPkg.EvalSplit(OperPSPS, LamPSPS(ipnt, :));
-    
+
     % get the power output by the thrust sources
     PreqTS(ipnt, :) = Preq(ipnt) * SplitTS;
-    
+
     % get the power output by the driven  power sources
     PreqPS(ipnt, :) = PreqTS(ipnt, :) * (SplitTSPS ./ EtaTSPS);
-    
+
     % get the power output by the driving power sources
     PreqPS(ipnt, :) = PreqPS(ipnt, :) * (SplitPSPS ./ EtaPSPS);
-        
+
 end
 
 % for the power and thrust sources, convert to thrust as well
@@ -300,13 +300,13 @@ Aircraft.Mission.History.SI.Power.Tout_PS(SegBeg:SegEnd, :) = PoutPS ./ TAS;
 
 % loop through points to get power outputs by the energy sources
 for ipnt = 1:npnt
-    
+
     % evaluate the function handle
     SplitPSES = PropulsionPkg.EvalSplit(OperPSES, LamPSES(ipnt, :));
-    
+
     % get the power output by the energy sources
     PreqES(ipnt, :) = PoutPS(ipnt, :) * (SplitPSES ./ EtaPSES);
-    
+
 end
 
 % ----------------------------------------------------------
@@ -326,85 +326,85 @@ FanDiam  = zeros(npnt, nps);
 ExitMach = zeros(npnt, nps);
 
 % check for a battery
-if (any(Batt))   
-    
+if (any(Batt))
+
     % get the indices of the engines
     HasBatt = find(Batt);
-    
+
     % loop through the engines
     for ibatt = 1:length(HasBatt)
-        
+
         % get the column index
         icol = HasBatt(ibatt);
-                
+
         % check if detailed battery model is used
         if (DetailedBatt == 1)
-            
+
             % power available from the battery
             [~, PreqES(ibeg:iend, icol),  ~, SOC(2:end, icol)] = BatteryPkg.Model(...
                 PreqES(ibeg:iend, icol), dt, SOC(1    , icol), ParCells, SerCells);
-            
+
             % check if the SOC falls below 20%
             BattDeplete = find(SOC(:, icol) < 20, 1);
-            
+
             % update the battery/EM power and SOC
             if ((~isempty(BattDeplete)) && (strcmpi(arch, "E") == 0) && (Aircraft.Settings.Analysis.Type < 0))
-                
+
                 % no more power is provided from the electric motor or battery
                 PreqES(BattDeplete:end, icol) = 0;
-                
+
                 % zero the splits
                 LamTS(  BattDeplete:end, :) = 0;
                 LamTSPS(BattDeplete:end, :) = 0;
                 LamPSPS(BattDeplete:end, :) = 0;
                 LamPSES(BattDeplete:end, :) = 0;
-                
+
                 % change the SOC (prior index is last charge > 20%)
                 SOC(BattDeplete:end, icol) = SOC(BattDeplete - 1, icol);
-                
+
                 % flag this result
                 Aircraft.Mission.History.Flags.SOCOff(MissID) = 1;
-                
+
             end
         end
 
         % get the energy from the battery
         E_ES(2:end, icol) = E_ES(1, icol) + cumsum(PreqES(ibeg:iend, icol) .* dt);
-        
+
         % get the battery energy remaining
         Eleft_ES(2:end, icol) = Eleft_ES(1, icol) - cumsum(PreqES(ibeg:iend, icol) .* dt);
-            
+
         % check if the battery remaining goes negative
         StopBatt = find(Eleft_ES(:, icol) < 0, 1);
-        
+
         % transfer power to the engines if the battery is empty (if not sizing)
         if (any(StopBatt) && (Aircraft.Settings.Analysis.Type < 0))
-            
+
             % stop the battery before it crosses 0 (maximum to avoid 0 index)
             StopBatt = max(1, StopBatt - 1);
-            
+
             % get the number of gas-turbine engines
             neng = sum(Eng);
-            
+
             % assume the gas-turbine engines can handle the EM load
             PoutPS(StopBatt:iend, Eng) = PoutPS(StopBatt:iend, Eng) + repmat(PreqES(StopBatt:iend, icol) ./ neng, 1, neng);
-            
+
             % set the battery power to 0 and remaining battery to 0
             PreqES(StopBatt:end, icol) = 0;
-            
+
             % recompute the battery energy consumed
             E_ES(2:end, icol) = E_ES(1, icol) + cumsum(PreqES(ibeg:iend, icol) .* dt);
-            
+
             % recompute the battery energy remaining
             Eleft_ES(2:end, icol) = Eleft_ES(1, icol) - cumsum(PreqES(ibeg:iend, icol) .* dt);
-            
+
         end
     end
 end
 
 % check for fuel
 if (any(Eng))
-    
+
     % check the aircraft class
     if      (strcmpi(aclass, "Turbofan" ) == 1)
 
@@ -430,130 +430,130 @@ if (any(Eng))
         GetDFan = @(SizedEngine) NaN;
 
     end
-    
+
     % get the indices of the engines
     HasEng = find(Eng);
-    
+
     % loop through the engines
     for ieng = 1:length(HasEng)
-        
+
         % get the column index
         icol = HasEng(ieng);
-                
+
         % compute the thrust output from the engine
         TEng = PoutTS(ibeg:iend, icol) ./ TAS(ibeg:iend);
-    
+
         % check for an electric motor connection
         if (~isempty(ParConns(icol)))
-            
+
             % get the power from the electric motors
             EMPartPower = sum(PoutPS(:, cell2mat(ParConns(icol))), 2);
-                        
+
         else
-            
+
             % no electric motor power
             EMPartPower = zeros(npnt, 1);
-            
+
         end
-        
+
         % check for any NaN or Inf (especially at takeoff)
         TEng(isnan(TEng)) = 0;
         TEng(isinf(TEng)) = 0;
-    
+
         % compute thrust/power available (depends on aircraft class)
         if      (strcmpi(aclass, "Turbofan" ) == 1)
-            
+
             % temporary thrust required
             TTemp = TEng;
-            
+
             % any required thrust < 1 must be rounded up to 5% SLS thrust
             TTemp(TEng < 1) = 0.05 * Aircraft.Specs.Propulsion.Thrust.SLS;
-            
+
             % divide the electric motor power by the fan efficiency
             EMPartPower = EMPartPower ./ Aircraft.Specs.Propulsion.Engine.EtaPoly.Fan;
-            
+
         elseif ((strcmpi(aclass, "Turboprop") == 1) || ...
                 (strcmpi(aclass, "Piston"   ) == 1) )
-            
+
             % temporary power required
             PTemp = PoutPS(ibeg:iend, icol);
-            
+
             % any required power  < 1 must be rounded up to 5% SLS power
             PTemp(PTemp < 1) = 0.05 * Aircraft.Specs.Power.SLS;
-            
+
         end
-    
+
         % temporary mach number
         MTemp = Mach(ibeg:iend);
-        
+
         % any mach number < 0.05 must be rounded up to 0.05
         MTemp(Mach < 0.05) = 0.05;
-        
+
         % get altitudes
         Alt = Alt(ibeg:iend);
-                
+
         % compute the SFC as a function of thrust required
         for ipnt = 1:(npnt-1)
-            
+
             % update the engine performance requirements
             Aircraft.Specs.Propulsion.Engine.Mach = MTemp(ipnt);
             Aircraft.Specs.Propulsion.Engine.Alt  = Alt(  ipnt);
-            
+
             % get the required thrust/power
             if      (strcmpi(aclass, "Turbofan" ) == 1)
                 Aircraft.Specs.Propulsion.Engine.DesignThrust = TTemp(ipnt);
-                
+
             elseif ((strcmpi(aclass, "Turboprop") == 1) || ...
                     (strcmpi(aclass, "Piston"   ) == 1) )
                 Aircraft.Specs.Propulsion.Engine.ReqPower     = PTemp(ipnt);
-                
+
             end
-            
+
             % size the engine at that point
             SizedEngine = EngSizeFun(Aircraft.Specs.Propulsion.Engine, EMPartPower(ipnt));
-            
+
             % get out the SFC (could be TSFC or BSFC)
             SFC(ipnt, icol) = GetSFC(SizedEngine);
-            
+
             % get the fuel flow
             MDotFuel(ipnt, icol) = SizedEngine.Fuel.MDot * Aircraft.Specs.Propulsion.MDotCF;
-            
+
             % Get the engine exit mach number (of each engine)
             ExitMach(ipnt, icol) = SizedEngine.States.Station9.Mach;
-            
+
             % get the engine fan diamater (single engine)
             FanDiam(ipnt, icol) = GetDFan(SizedEngine);
-            
+
             % get the air mass flow through (one) of the engines
             MDotAir(ipnt, icol) = SizedEngine.MDotAir;
-            
-        end                
+
+        end
     end
-        
+
     % compute the mass flow into all power sources
     dmdt = MDotFuel * SplitPSES;
-    
+
     % compute the power from the energy source
     dEdt = dmdt(:, Fuel) .* efuel;
-    
+
     % compute the fuel burn at each point
     dFburn = dmdt(1:end-1, Fuel) .* dt;
-    
+
     % compute the energy expended at each control point
     dEfuel = dEdt(1:end-1) .* dt;
-    
+
     % track the cumulative fuel burn
     CumFburn = cumsum(dFburn);
-    
+
     % compute the cumulative fuel burn
     Fburn(2:end) = Fburn(1) + CumFburn;
-    
+
     % update the aircraft's mass
     Mass( 2:end) = Mass( 1) - CumFburn;
-        
+
     % compute the fuel energy consumed
     E_ES(    2:end, Fuel) = E_ES(2:end, Fuel) + cumsum(dEfuel);
-    
+
     % compute the fuel energy remaining
     Eleft_ES(2:end, Fuel) = Eleft_ES(1, Fuel) - cumsum(dEfuel);
 
@@ -562,96 +562,78 @@ end
 
 if any(FC)
 
-
-
-
-
-
-
-    
     % get the indices of the engines
     HasFC = find(FC);
-    
+
     % loop through the engines
     for ifc = 1:length(HasFC)
-        
+
         % get the column index
         icol = HasFC(ifc);
-                
 
-    
+        % temporary power required
+        PTemp = PoutPS(ibeg:iend, icol);
 
-       
-            
+        % any required power  < 1 must be rounded up to 5% SLS power
+        %PTemp(PTemp < 1) = 0.05 * Aircraft.Specs.Power.SLS;
 
-            
-            % temporary power required
-            PTemp = PoutPS(ibeg:iend, icol);
-            
-            % any required power  < 1 must be rounded up to 5% SLS power
-            %PTemp(PTemp < 1) = 0.05 * Aircraft.Specs.Power.SLS;
-            
-
-    
         % temporary mach number
         MTemp = Mach(ibeg:iend);
-        
+
         % any mach number < 0.05 must be rounded up to 0.05
         MTemp(Mach < 0.05) = 0.05;
-        
+
         % get altitudes
         Alt = Alt(ibeg:iend);
-                
+
         % compute the SFC as a function of thrust required
         for ipnt = 1:(npnt-1)
-            
 
-            
             % size the engine at that point
             SizedFC = Elias_Function(FC_File, Alt(ipnt), MTemp(ipnt), PTemp(ipnt));
-            
+
             % get out the SFC (could be TSFC or BSFC)
             SFC(ipnt, icol) = NaN;
-            
+
             % get the fuel flow
             MDotFuel(ipnt, icol) = SizedFC.Performance * Aircraft.Specs.Propulsion.MDotCF;
-            
+
             % Get the engine exit mach number (of each engine)
             ExitMach(ipnt, icol) = NaN;
-            
+
             % get the engine fan diamater (single engine)
             FanDiam(ipnt, icol) = NaN;
-            
+
             % get the air mass flow through (one) of the engines
             MDotAir(ipnt, icol) = NaN;
-            
-        end                
+
+        end
     end
-        
+
     % compute the mass flow into all power sources
     dmdt = MDotFuel * SplitPSES;
-    
+
     % compute the power from the energy source
     dEdt = dmdt(:, Fuel) .* efuel;
-    
+
     % compute the fuel burn at each point
     dFburn = dmdt(1:end-1, Fuel) .* dt;
-    
+
     % compute the energy expended at each control point
     dEfuel = dEdt(1:end-1) .* dt;
-    
+
     % track the cumulative fuel burn
     CumFburn = cumsum(dFburn);
-    
+
     % compute the cumulative fuel burn
     Fburn(2:end) = Fburn(1) + CumFburn;
-    
+
     % update the aircraft's mass
     Mass( 2:end) = Mass( 1) - CumFburn;
-        
+
     % compute the fuel energy consumed
     E_ES(    2:end, Fuel) = E_ES(2:end, Fuel) + cumsum(dEfuel);
-    
+
     % compute the fuel energy remaining
     Eleft_ES(2:end, Fuel) = Eleft_ES(1, Fuel) - cumsum(dEfuel);
 end
@@ -677,7 +659,7 @@ Aircraft.Mission.History.SI.Weight.Fburn(    SegBeg:SegEnd) = Fburn;
 % propulsion system quantities
 Aircraft.Mission.History.SI.Propulsion.TSFC(    SegBeg:SegEnd, :) = SFC     ;
 Aircraft.Mission.History.SI.Propulsion.MDotFuel(SegBeg:SegEnd, :) = MDotFuel;
-Aircraft.Mission.History.SI.Propulsion.MDotAir( SegBeg:SegEnd, :) = MDotAir ; 
+Aircraft.Mission.History.SI.Propulsion.MDotAir( SegBeg:SegEnd, :) = MDotAir ;
 Aircraft.Mission.History.SI.Propulsion.FanDiam( SegBeg:SegEnd, :) = FanDiam ;
 Aircraft.Mission.History.SI.Propulsion.ExitMach(SegBeg:SegEnd, :) = ExitMach;
 
