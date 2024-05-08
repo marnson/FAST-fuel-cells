@@ -8,6 +8,9 @@ function [LH2_Consumption] = OffDesignFC(Aircraft,CurrentPower,h,M)
 %load('FC_data.mat')
 FCmap_eff = Aircraft.HistData.FC.FCmap_eff;
 
+h(h > 37499) = 37499;
+M(M > 0.8) = 0.8;
+
 
 % Fuel Consumption
 % OffDesignFC.Performance = LH2_Consumption(SizedFuelCellSystem, CurrentPower, delta_eta);
