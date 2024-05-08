@@ -29,8 +29,10 @@ SegBeg = Aircraft.Mission.Profile.SegBeg(SegsID);
 SegEnd = Aircraft.Mission.Profile.SegEnd(SegsID);
 
 % aircraft performance history
-TAS  = Aircraft.Mission.History.SI.Performance.TAS( SegBeg:SegEnd);
-Rho  = Aircraft.Mission.History.SI.Performance.Rho( SegBeg:SegEnd);
+TAS  = Aircraft.Mission.History.SI.Performance.TAS(  SegBeg:SegEnd);
+Rho  = Aircraft.Mission.History.SI.Performance.Rho(  SegBeg:SegEnd);
+Mach = Aircraft.Mission.History.SI.Performance.Mach( SegBeg:SegEnd);
+Alt  = Aircraft.Mission.History.SI.Performance.Alt(  SegBeg:SegEnd);
 
 % ----------------------------------------------------------
 
@@ -62,6 +64,7 @@ npnt = length(TAS);
 % get the types of power sources
 Eng = PSType == +1;
 EM  = PSType ==  0;
+FC  = PSType == +2;
 
 % get the efficiencies
 EtaTSPS = Aircraft.Specs.Propulsion.Eta.TSPS;
@@ -155,6 +158,12 @@ if (any(EM))
     
     % input electric motor model, if desired
         
+end
+
+if any(FC)
+
+   % PowerAv(:, FC) = FuelCellPkg.MaxPower(Aircraft,Alt,Mach,sum(FC));
+
 end
 
 

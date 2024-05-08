@@ -177,7 +177,7 @@ Aircraft.Specs.Propulsion.Engine = NaN;
 Aircraft.Specs.Propulsion.NumEngines = 0;
 
 % thrust-weight ratio (if a turbojet/turbofan)
-Aircraft.Specs.Propulsion.T_W.SLS = 2.37e5/(73500*9.81);
+Aircraft.Specs.Propulsion.T_W.SLS = 2.37e5/(73500*9.81)*1.13;
 
 % total sea-level static thrust available (lbf)
 Aircraft.Specs.Propulsion.Thrust.SLS = NaN;

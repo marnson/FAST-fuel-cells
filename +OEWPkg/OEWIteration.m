@@ -150,7 +150,8 @@ switch Class
                 Vtank = Wfuel*120e6/43e6/800*UnitConversionPkg.ConvLength(1,'m','ft')^3; % in feet
                 WconvTank = 2.405*Vtank^0.606;      
                 WH2Tank = Wfuel*0.7;
-                WframeNew = WframeNew - WconvTank + WH2Tank;               
+                WframeNew = WframeNew - WconvTank + WH2Tank;  
+                Aircraft.Specs.Weight.Tank = WH2Tank;
             end
 
             % update the airframe weight with a calibration factor

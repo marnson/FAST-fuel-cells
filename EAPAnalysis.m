@@ -324,6 +324,16 @@ while (iter < MaxIter)
     fprintf(1, "    Wfc   = %.6e lbm   \n", UnitConversionPkg.ConvMass(Wfuelcell, "kg", "lbm")    );
     fprintf(1, "    S     = %.6e ft^2\n\n", S * UnitConversionPkg.ConvLength(1 , "m" , "ft" ) ^ 2);
     
+
+
+    % Update Point performance 
+    
+%     [~,MP_Index] = max(Aircraft.Mission.History.SI.Power.Req(Aircraft.Settings.TkoPoints:end));
+%     MaxThrust = sum(Aircraft.Mission.History.SI.Power.Treq_TS(MP_Index+Aircraft.Settings.TkoPoints,:));
+%     Aircraft.Specs.Propulsion.T_W.SLS = MaxThrust/Aircraft.Specs.Weight.MTOW;
+
+
+
     % iterate
     iter = iter + 1;
     
