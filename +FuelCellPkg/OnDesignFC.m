@@ -5,6 +5,11 @@ Oversizing_Factor = 1.3;
 
 Data = Aircraft.HistData.FC;
 
+h = UnitConversionPkg.ConvLength(h,'m','ft');
+
+h(h > 37499) = 37499;
+M(M > 0.8) = 0.8;
+
 maxpower_per_lb = interp2(Data.MP_h_rng,Data.MP_M_rng,Data.MP_Wlb_mat,h,M); % max power @ sizing criteria
 
 FuelCell_Weight = MaxPower*Oversizing_Factor/maxpower_per_lb; % FC weight in lbs 

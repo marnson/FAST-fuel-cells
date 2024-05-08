@@ -219,7 +219,7 @@ Aircraft.Mission.History.SI.Power.Tav_PS(SegBeg:SegEnd, :) = ThrustAv;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % propagate the power available forward along the powertrain
-PowerTS = PowerAv * (PSPS .* EtaPSPS)' * (TSPS .* EtaTSPS)';
+PowerTS = PowerAv * (eye(size(EtaPSPS,1)) .* EtaPSPS)' * (TSPS .* EtaTSPS)';
 
 % convert the power available to thrust available
 ThrustTS = PowerTS ./ TAS;
