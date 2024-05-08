@@ -17,6 +17,9 @@ M(M > 0.8) = 0.8;
 FuelCell_Weight = UnitConversionPkg.ConvMass(Aircraft.Specs.Weight.FuelCells,'kg','lbm'); % weight from KG to LB
 
 FCeff = FuelCellPkg.interp3D_V003(FCmap_eff,1,CurrentPower/FuelCell_Weight,M,h,'n');
+if FCeff > 1
+    FCeff = 0.6;
+end
 
 % Drag caused by HEX, not currently used
 % drag = interp3D_V003(FCmap_drag,1,CurrentPower/FuelCell_Weight,M,h,'n')*FuelCell_Weight;
