@@ -575,13 +575,14 @@ if any(FC)
         PTemp = PoutPS(ibeg:iend, icol);
 
         % any required power  < 1 must be rounded up to 5% SLS power
-        %PTemp(PTemp < 1) = 0.05 * Aircraft.Specs.Power.SLS;
+        LLP = 300*2.2*Aircraft.Specs.Weight.FuelCells/2;
+        PTemp(PTemp < LLP) = LLP;
 
         % temporary mach number
         MTemp = Mach(ibeg:iend);
 
         % any mach number < 0.05 must be rounded up to 0.05
-        MTemp(Mach < 0.05) = 0.05;
+        MTemp(Mach < 0.25) = 0.25;
 
         % get altitudes
         Alt = Alt(ibeg:iend);

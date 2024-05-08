@@ -39,4 +39,4 @@ ac.HEX.ar = 8.5986;
 ac.prop.num = 9;
 ac.HEX.length_ratio = 5;
 
-Total_Drag = IsolatedHEXdrag(ac,M,h,heat)
+Total_Drag = IsolatedHEXdrag(ac,M,h,heat) % in pound force

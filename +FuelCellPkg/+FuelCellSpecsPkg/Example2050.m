@@ -17,7 +17,7 @@ function [FuelCell] = Example2050()
     FuelCell.k = 60e-7;
     FuelCell.m = 8e-5;
     FuelCell.n = 2e-4;
-    FuelCell.deg = 0.00;
+    FuelCell.deg = 0.00; % degredation
     FuelCell.weight = 363*2.2/1.142; % Multiply this to change weight estimation
 end
 
