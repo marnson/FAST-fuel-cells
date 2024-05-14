@@ -99,7 +99,7 @@ Aircraft.Specs.Weight.Fuel = 19000;
 % battery weight (lbm), leave NaN for propulsion systems without batteries
 Aircraft.Specs.Weight.Batt = NaN;
 
-Aircraft.Specs.Weight.WairfCF = 1.12;
+Aircraft.Specs.Weight.WairfCF = 1.13;
 
 %% PROPULSION %%
 %%%%%%%%%%%%%%%%
@@ -174,7 +174,7 @@ Aircraft.Specs.Propulsion.Engine = NaN;
 Aircraft.Specs.Propulsion.NumEngines = 0;
 
 % thrust-weight ratio (if a turbojet/turbofan)
-Aircraft.Specs.Propulsion.T_W.SLS = 2.37e5/(73500*9.81)*1.1;
+Aircraft.Specs.Propulsion.T_W.SLS = 2.37e5/(73500*9.81)*1.09;
 
 % total sea-level static thrust available (lbf)
 Aircraft.Specs.Propulsion.Thrust.SLS = NaN;
@@ -184,7 +184,7 @@ Aircraft.Specs.Propulsion.Eta.Prop = NaN;
 
 Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
 
-Aircraft.Specs.Propulsion.MDotCF = 2;
+Aircraft.Specs.Propulsion.MDotCF = 2.1;
 
 
 %% POWER %%
@@ -205,7 +205,7 @@ Aircraft.Specs.Power.P_W.SLS = NaN;
 
 % power-weight ratio for the electric motor and generator (kW/kg)
 % leave as NaN if an electric motor or generator isn't in the powertrain
-Aircraft.Specs.Power.P_W.EM = 10;
+Aircraft.Specs.Power.P_W.EM = 19;
 Aircraft.Specs.Power.P_W.EG = NaN;
 
 % thrust splits (thrust / total thrust)
