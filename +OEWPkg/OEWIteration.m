@@ -233,7 +233,7 @@ switch Class
             if any(FC) % Modify Frame weight if fuel cells
                 Vtank = Wfuel*120e6/43e6/800*UnitConversionPkg.ConvLength(1,'m','ft')^3; % in feet
                 WconvTank = 2.405*Vtank^0.606;      
-                WH2Tank = Wfuel*0.7;
+                WH2Tank = Wfuel*Aircraft.Specs.Weight.EtaTank;
                 WframeNew = WframeNew - WconvTank + WH2Tank;               
             end
             

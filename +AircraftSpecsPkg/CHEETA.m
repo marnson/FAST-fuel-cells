@@ -101,6 +101,8 @@ Aircraft.Specs.Weight.Batt = NaN;
 
 Aircraft.Specs.Weight.WairfCF = 1.13;
 
+Aircraft.Specs.Weight.EtaTank = 0.7;
+
 %% PROPULSION %%
 %%%%%%%%%%%%%%%%
 
