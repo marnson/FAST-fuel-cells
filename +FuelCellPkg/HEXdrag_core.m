@@ -5,9 +5,8 @@ cp = 1006; %kj/kg-k
 
 %Environemntal (h-dervied)
 % [T0, a, Pinf, rhoinf] = atmosisa(h/3.2808399);
-T0 = air_temp(h);
-a = speedofsound(h)/3.2808399;
-rhoinf = airdensity(h)*515.37882;
+[T0,~,rhoinf] = MissionSegsPkg.StdAtm(h);
+a = sqrt(gamma*287*T0);
 
 vinf = Minf*a;
 Tt0 = T0*(1+(gamma-1)/2*Minf^2);

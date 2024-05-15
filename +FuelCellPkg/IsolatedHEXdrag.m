@@ -2,7 +2,7 @@ function [Total_Drag] = IsolatedHEXdrag(ac,Mach,altitude,heat)
 %IsolatedHEXdrag Calculates isolated HEX drag given aircraft inputs and
 %heat
 
-[Dcore,v1,~] = HEXdrag_core(Mach,altitude,ac.HEX.ar/ac.prop.num,heat/ac.prop.num);
+[Dcore,v1,~] = FuelCellPkg.HEXdrag_core(Mach,altitude,ac.HEX.ar/ac.prop.num,heat/ac.prop.num);
 % area of one HEX
 area = ac.HEX.ar/ac.prop.num;
 
@@ -12,9 +12,10 @@ r = sqrt(area/pi);
 HEX_length = ac.HEX.length_ratio*(r*2);
 
 %External Flow
-v_cruise = Mach*speedofsound(altitude);
-rho = airdensity(altitude);
-viscocity = airviscocity(altitude);
+[Tinf,~,rho] = MissionSegsPkg.StdAtm(altitude);
+v_cruise = Mach*sqrt(1.4*287*Tinf);
+
+%viscocity = airviscocity(altitude);
 % RN = rho*v_cruise*HEX_length/viscocity;
 % Cf = .455/(log10(RN))^2.58/(1+.144*Mach^2)^.65;
 

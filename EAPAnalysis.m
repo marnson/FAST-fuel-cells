@@ -332,6 +332,32 @@ while (iter < MaxIter)
 %     MaxThrust = sum(Aircraft.Mission.History.SI.Power.Treq_TS(MP_Index+Aircraft.Settings.TkoPoints,:));
 %     Aircraft.Specs.Propulsion.T_W.SLS = MaxThrust/Aircraft.Specs.Weight.MTOW;
 
+    % Update L/D
+    
+    % get power during all cruise segments where altitude is above 20,000
+    % ft and average it
+
+
+
+    Segs = Aircraft.Mission.History.Segment;
+    Alts = Aircraft.Mission.History.SI.Performance.Alt;
+    Ptemp = Aircraft.Mission.History.SI.Power.Req;
+    Ptemp(Segs ~= "Cruise") = [];
+    Alts(Segs ~= "Cruise") = [];
+    Ptemp(Alts < 5e3) = [];
+    CruisePower = mean(Ptemp);
+    CruiseMach = Aircraft.Specs.Performance.Vels.Crs;
+    CruiseAlt = Aircraft.Specs.Performance.Alts.Crs;
+
+    Aircraft.Specs.Propulsion.FuelCell.HEX.ar = 8.5986;
+Aircraft.Specs.Propulsion.FuelCell.prop.num = 9;
+Aircraft.Specs.Propulsion.FuelCell.HEX.length_ratio = 5;
+    
+    [~,RejectedHeat] = FuelCellPkg.OffDesignFC(Aircraft,CruisePower,CruiseAlt,CruiseMach);
+    [ExtraDrag] = FuelCellPkg.IsolatedHEXdrag(Aircraft.Specs.Propulsion.FuelCell,CruiseMach,CruiseAlt,RejectedHeat);
+
+
+
 
 
     % iterate

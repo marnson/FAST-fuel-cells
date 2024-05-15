@@ -1,4 +1,4 @@
-function [LH2_Consumption] = OffDesignFC(Aircraft,CurrentPower,h,M)
+function [LH2_Consumption,heat] = OffDesignFC(Aircraft,CurrentPower,h,M)
 
 % changes in efficiency based on off design performance
 % delta_eta = function_of(MaxPower,CurrentPower,etc); % Hope this isn't
@@ -29,7 +29,9 @@ FCeff(FCeff > 37500) = 37500;
 % drag = interp3D_V003(FCmap_drag,1,CurrentPower/FuelCell_Weight,M,h,'n')*FuelCell_Weight;
 
 % Magnitude of heat rejection, Watts.
-%heat = interp3D_V003(FCmap_heat,1,CurrentPower/FuelCell_Weight,M,h,'n')*FuelCell_Weight; % heat, watts
+
+FCmap_heat = Aircraft.HistData.FC.FCmap_heat;
+heat = FuelCellPkg.interp3D_V003(FCmap_heat,1,CurrentPower/FuelCell_Weight,M,h,'n')*FuelCell_Weight; % heat, watts
 
 LH2_Consumption = CurrentPower/FCeff/119930040; % consumption in KG/SEC
 
