@@ -281,6 +281,8 @@ Aircraft.Settings.Table = 0;
 
 Aircraft.Settings.VisualizeAircraft = 0;
 
+Aircraft.Settings.Offtake = 2;
+
 % ----------------------------------------------------------
 
 end

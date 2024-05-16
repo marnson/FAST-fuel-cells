@@ -162,7 +162,7 @@ end
 
 if any(FC)
 
-   % PowerAv(:, FC) = FuelCellPkg.MaxPower(Aircraft,Alt,Mach,sum(FC));
+   PowerAv(:, FC) = FuelCellPkg.MaxPower(Aircraft,Alt,Mach,sum(FC));
 
 end
 

@@ -23,7 +23,6 @@ if FCeff > 1
     FCeff = 0.6;
 end
 
-FCeff(FCeff > 37500) = 37500;
 
 % Drag caused by HEX, not currently used
 % drag = interp3D_V003(FCmap_drag,1,CurrentPower/FuelCell_Weight,M,h,'n')*FuelCell_Weight;

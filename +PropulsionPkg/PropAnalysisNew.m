@@ -238,6 +238,16 @@ for ipnt = 1:npnt
     % get the power output by the driving power sources
     PreqPS(ipnt, :) = PreqPS(ipnt, :) * (SplitPSPS ./ EtaPSPS);
 
+    % 
+    if Aircraft.Settings.Offtake == 2
+    PowerTO = sum(Aircraft.Mission.History.SI.Power.Pout_TS(1,:));
+    OffTakePower = PropulsionPkg.SubSystemOfftake(PowerTO,"OffDesign");
+    
+    PreqPS(ipnt, FC) = PreqPS(ipnt, FC) + OffTakePower/sum(FC); 
+
+
+
+    end
 end
 
 % for the power and thrust sources, convert to thrust as well

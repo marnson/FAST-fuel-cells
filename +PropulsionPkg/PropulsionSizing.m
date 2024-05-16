@@ -148,6 +148,8 @@ else
     
 end
 
+P0 = P0 + PropulsionPkg.SubSystemOfftake(P0,"Sizing");
+
 % get the power/thrust split function handles
 FunSplitTS   = Aircraft.Specs.Propulsion.Oper.TS  ;
 FunSplitTSPS = Aircraft.Specs.Propulsion.Oper.TSPS;

@@ -40,6 +40,7 @@ MaxSOC = 23;
 
 % maximum extracted capacity and voltage
 QMax = 2.6; % Ah
+
 VMax = 3.6; % V
 
 
