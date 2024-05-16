@@ -6,7 +6,8 @@ function [LH2_Consumption,heat] = OffDesignFC(Aircraft,CurrentPower,h,M)
 
 % load FC data
 %load('FC_data.mat')
-FCmap_eff = Aircraft.HistData.FC.FCmap_eff;
+
+Data = Aircraft.HistData.FC;
 
 h = UnitConversionPkg.ConvLength(h,'m','ft');
 
@@ -18,9 +19,9 @@ M(M > 0.8) = 0.8;
 % OffDesignFC.Performance = LH2_Consumption(SizedFuelCellSystem, CurrentPower, delta_eta);
 FuelCell_Weight = UnitConversionPkg.ConvMass(Aircraft.Specs.Weight.FuelCells,'kg','lbm'); % weight from KG to LB
 
-FCeff = FuelCellPkg.interp3D_V003(FCmap_eff,1,CurrentPower/FuelCell_Weight,M,h,'n');
+FCeff = FuelCellPkg.interp3D_V003(Data.FCmap_eff,1,CurrentPower/FuelCell_Weight,M,h,'n');
 if FCeff > 1
-    FCeff = 0.6;
+    FCeff = interp2(Data.MP_h_rng,Data.MP_M_rng,Data.MP_Eff_mat,h,M);
 end
 
 
@@ -29,8 +30,13 @@ end
 
 % Magnitude of heat rejection, Watts.
 
-FCmap_heat = Aircraft.HistData.FC.FCmap_heat;
-heat = FuelCellPkg.interp3D_V003(FCmap_heat,1,CurrentPower/FuelCell_Weight,M,h,'n')*FuelCell_Weight; % heat, watts
+% Add line hear that uses an interp2 for M and h to get max heat
+
+heat = FuelCellPkg.interp3D_V003(Data.FCmap_heat,1,CurrentPower/FuelCell_Weight,M,h,'n')*FuelCell_Weight; % heat, watts
+
+if heat >  999999*FuelCell_Weight
+    heat = interp2(Data.MP_h_rng,Data.MP_M_rng,Data.MP_Heat_mat,h,M)*FuelCell_Weight;
+end
 
 LH2_Consumption = CurrentPower/FCeff/119930040; % consumption in KG/SEC
 

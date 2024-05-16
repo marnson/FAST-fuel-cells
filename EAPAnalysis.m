@@ -337,7 +337,7 @@ while (iter < MaxIter)
     % get powers only at high altitude (main) cruise segments
     Segs = Aircraft.Mission.History.Segment;
     Alts = Aircraft.Mission.History.SI.Performance.Alt;
-    Ptemp = Aircraft.Mission.History.SI.Power.Req;
+    Ptemp = Aircraft.Mission.History.SI.Power.Preq_PS(:,3) + Aircraft.Mission.History.SI.Power.Preq_PS(:,4);
     Ptemp(Segs ~= "Cruise") = [];
     Alts(Segs ~= "Cruise") = [];
     Ptemp(Alts < 5e3) = [];
@@ -358,7 +358,12 @@ while (iter < MaxIter)
 
     % use rejected heat to predice Extra drag
     [ExtraDrag] = FuelCellPkg.IsolatedHEXdrag(Aircraft.Specs.Propulsion.FuelCell,CruiseMach,CruiseAlt,RejectedHeat);
-
+    
+    if iter == 0
+    L_D = Aircraft.Specs.Aero.L_D.Crs;
+    end
+    NewL_D = 1/(1/(L_D) + ExtraDrag/(Aircraft.Specs.Weight.MTOW*0.95*9.81));
+    Aircraft.Specs.Aero.L_D.Crs = NewL_D;
 
 
 

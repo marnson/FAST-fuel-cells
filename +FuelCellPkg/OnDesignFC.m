@@ -1,7 +1,7 @@
 function [FC_Weight] = OnDesignFC(Aircraft,MaxPower, h, M)
 
 %initialize fuel cell
-Oversizing_Factor = 1.15;
+Oversizing_Factor = Aircraft.Specs.Propulsion.FC_Oversize;
 
 Data = Aircraft.HistData.FC;
 

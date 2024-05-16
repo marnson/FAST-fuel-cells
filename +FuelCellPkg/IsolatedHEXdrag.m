@@ -2,6 +2,8 @@ function [Total_Drag] = IsolatedHEXdrag(ac,Mach,altitude,heat)
 %IsolatedHEXdrag Calculates isolated HEX drag given aircraft inputs and
 %heat
 
+
+
 [Dcore,v1,~] = FuelCellPkg.HEXdrag_core(Mach,altitude,ac.HEX.ar/ac.prop.num,heat/ac.prop.num);
 % area of one HEX
 area = ac.HEX.ar/ac.prop.num;
@@ -47,7 +49,9 @@ ExDrag = 0;
 
 %Andrew method
 CD = 0.040;
-DNacelle = CD/2*rho*v_cruise^2*(ac.HEX.ar/ac.prop.num*10.76391)*(v1*3.28)/v_cruise;
+
+
+DNacelle = CD/2*rho*v_cruise^2*(ac.HEX.ar/ac.prop.num)*(v1)/v_cruise;
 % DNacelle = 0;
 % area = ac.HEX.ar
 

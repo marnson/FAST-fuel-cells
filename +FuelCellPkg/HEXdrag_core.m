@@ -1,4 +1,4 @@
-function [Dcore,v3,v1,Dm] = HEXdrag_core(Minf,h,Ar,Hdot)
+function [Dcore2,v3,v1,Dm] = HEXdrag_core(Minf,h,Ar,Hdot)
 % Constants
 gamma = 1.4;
 cp = 1006; %kj/kg-k

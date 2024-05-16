@@ -99,9 +99,9 @@ Aircraft.Specs.Weight.Fuel = 19000;
 % battery weight (lbm), leave NaN for propulsion systems without batteries
 Aircraft.Specs.Weight.Batt = NaN;
 
-Aircraft.Specs.Weight.WairfCF = 1.13;
+Aircraft.Specs.Weight.WairfCF = 1.2;
 
-Aircraft.Specs.Weight.EtaTank = 0.7;
+Aircraft.Specs.Weight.EtaTank = 0.65;
 
 %% PROPULSION %%
 %%%%%%%%%%%%%%%%
@@ -153,7 +153,7 @@ Aircraft.Specs.Propulsion.Oper.PSPS = @() Aircraft.Specs.Propulsion.PropArch.PSP
 Aircraft.Specs.Propulsion.Oper.PSES = @() Aircraft.Specs.Propulsion.PropArch.PSES;
 
 % thrust-power  source efficiency
-Aircraft.Specs.Propulsion.Eta.TSPS  = ones(2,4);
+Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.75, 1, 1, 1; 1, 0.75, 1, 1];
 
 % power -power  source efficiency
 Aircraft.Specs.Propulsion.Eta.PSPS  = ones(4);
@@ -186,7 +186,9 @@ Aircraft.Specs.Propulsion.Eta.Prop = NaN;
 
 Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
 
-Aircraft.Specs.Propulsion.MDotCF = 2.1;
+Aircraft.Specs.Propulsion.MDotCF = 1;
+
+Aircraft.Specs.Propulsion.FC_Oversize = 1;
 
 
 %% POWER %%
