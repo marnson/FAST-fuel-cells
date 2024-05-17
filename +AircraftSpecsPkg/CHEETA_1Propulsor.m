@@ -1,4 +1,4 @@
-function [Aircraft] = CHEETA()
+function [Aircraft] = CHEETA_1Propulsor()
 %
 % [Aircraft] = CHEETA()
 % written by Max Arnson, marnson@umich.edu
@@ -99,7 +99,7 @@ Aircraft.Specs.Weight.Fuel = 19000;
 % battery weight (lbm), leave NaN for propulsion systems without batteries
 Aircraft.Specs.Weight.Batt = NaN;
 
-Aircraft.Specs.Weight.WairfCF = 1.18;
+Aircraft.Specs.Weight.WairfCF = 1.2;
 
 Aircraft.Specs.Weight.EtaTank = 0.65;
 
@@ -126,22 +126,19 @@ Aircraft.Specs.Propulsion.Arch.Type = "O";
 
 % thrust-power source matrix
 Aircraft.Specs.Propulsion.PropArch.TSPS = ...
-    [1 0 0 0
-     0 1 0 0];
+    [1 0];
 
 % power-power source matrix
 Aircraft.Specs.Propulsion.PropArch.PSPS = ...
-    [1 0 1 0
-     0 1 0 1
-     0 0 1 0
-     0 0 0 1];
+    [1 1
+     0 1];
 
 % power-energy source matrix
 Aircraft.Specs.Propulsion.PropArch.PSES = ...
-    [0; 0; 1; 1];
+    [0; 1];
 
 % thrust      source operation
-Aircraft.Specs.Propulsion.Oper.TS   = @() [0.5, 0.5];
+Aircraft.Specs.Propulsion.Oper.TS   = @() [1];
 
 % thrust-power source operation
 Aircraft.Specs.Propulsion.Oper.TSPS = @() Aircraft.Specs.Propulsion.PropArch.TSPS;
@@ -153,19 +150,19 @@ Aircraft.Specs.Propulsion.Oper.PSPS = @() Aircraft.Specs.Propulsion.PropArch.PSP
 Aircraft.Specs.Propulsion.Oper.PSES = @() Aircraft.Specs.Propulsion.PropArch.PSES;
 
 % thrust-power  source efficiency
-Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.9, 1, 1, 1; 1, 0.9, 1, 1];
+Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.9, 1];
 
 % power -power  source efficiency
-Aircraft.Specs.Propulsion.Eta.PSPS  = ones(4);
+Aircraft.Specs.Propulsion.Eta.PSPS  = ones(2);
 
 % power -energy source efficiency
-Aircraft.Specs.Propulsion.Eta.PSES  = ones(4,1);
+Aircraft.Specs.Propulsion.Eta.PSES  = ones(2,1);
 
 % energy source type (1 = fuel, 0 = battery)
 Aircraft.Specs.Propulsion.PropArch.ESType = [1];
 
 % power source type (1 = engine, 0 = electric motor)
-Aircraft.Specs.Propulsion.PropArch.PSType = [0, 0, 2, 2];
+Aircraft.Specs.Propulsion.PropArch.PSType = [0, 2];
 
 % ----------------------------------------------------------
 
