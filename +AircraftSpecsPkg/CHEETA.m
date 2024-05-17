@@ -188,7 +188,7 @@ Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
 
 Aircraft.Specs.Propulsion.MDotCF = 1;
 
-Aircraft.Specs.Propulsion.FC_Oversize = 1;
+Aircraft.Specs.Propulsion.FC_Oversize = 1.02;
 
 
 %% POWER %%

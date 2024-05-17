@@ -1,4 +1,4 @@
-function [Aircraft] = A320Neo()
+function [Aircraft] = A320Neo_FuelCell()
 %
 % [Aircraft] = A320Neo()
 % written by Max Arnson, marnson@umich.edu
@@ -61,7 +61,7 @@ Aircraft.Specs.Performance.Alts.Crs = UnitConversionPkg.ConvLength(35000,'ft','m
 Aircraft.Specs.Performance.Range = 4815e3;
 
 % maximum rate of climb (ft/s), assumed 2,250 ft/min
-Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(2250/60,'ft','m');
+Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(500/60,'ft','m');
 
 
 %% AERODYNAMICS %%
@@ -103,6 +103,8 @@ Aircraft.Specs.Weight.Fuel = 19000;
 Aircraft.Specs.Weight.Batt = NaN;
 
 Aircraft.Specs.Weight.WairfCF = 1.35;
+
+Aircraft.Specs.Propulsion.FC_Oversize = 1.02;
 
 %% PROPULSION %%
 %%%%%%%%%%%%%%%%

@@ -349,8 +349,8 @@ while (iter < MaxIter)
     CruiseAlt = Aircraft.Specs.Performance.Alts.Crs;
 
     % Set Heat Ex Specs (move this to user side later)
-    Aircraft.Specs.Propulsion.FuelCell.HEX.ar = 8.5986;
-    Aircraft.Specs.Propulsion.FuelCell.prop.num = 9;
+    Aircraft.Specs.Propulsion.FuelCell.HEX.ar = 8.5986   * 0.65;
+    Aircraft.Specs.Propulsion.FuelCell.prop.num = 2;
     Aircraft.Specs.Propulsion.FuelCell.HEX.length_ratio = 5;
     
     % Run off design to predict rejected heat
@@ -364,6 +364,7 @@ while (iter < MaxIter)
     end
     NewL_D = 1/(1/(L_D) + ExtraDrag/(Aircraft.Specs.Weight.MTOW*0.95*9.81));
     Aircraft.Specs.Aero.L_D.Crs = NewL_D;
+    Aircraft.Specs.Aero.L_D.Crs = NewL_D*16/18;
 
 
 

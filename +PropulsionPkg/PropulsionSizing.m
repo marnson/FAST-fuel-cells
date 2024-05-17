@@ -238,7 +238,7 @@ if (any(PSType == 2))
     % loop through the engines
     for ifc = 1:length(HasFC)
         % size fuel cell (on design) with design point and max power
-        Wfc(ifc) = FuelCellPkg.OnDesignFC(Aircraft,Power(HasFC(ifc)),0,0.25);
+        Wfc(ifc) = FuelCellPkg.OnDesignFC(Aircraft,Power(HasFC(ifc)),1e4,0.78);
     end
     
 else
