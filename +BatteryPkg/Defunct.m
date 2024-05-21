@@ -1,3 +1,8 @@
+
+% Old script which processed raw data from a .res file matthew sent. see
+% UIUC_Interpolation file
+
+
 clear; clc; close all
 
 
@@ -7,12 +12,12 @@ for ii = 1:length(data)
 
     if ii == 2
         style = '--';
-    else 
+    else
         style = '-';
     end
 
     plot(data{ii}(:,1),data{ii}(:,2),style)
-hold on
+    hold on
 end
 
 grid on
@@ -20,3 +25,48 @@ grid on
 legend("0 Amps","2 Amps","4 Amps","6 Amps","8 Amps")
 ylabel('Cell Voltage [V]')
 xlabel('Cell Capactiy Expended [mAh]')
+
+
+Voltage1 =  zeros(21,5);
+Amperage1 = zeros(21,5);
+Capacity1 = zeros(21,5);
+
+
+for ii = 1:length(data)
+    n = size(data{ii},1);
+    Amperage1(:,ii) = (ii-1)*2.*ones(21,1);
+    Capacity1(1:n,ii) = data{ii}(:,1);
+    Voltage1(1:n,ii) = data{ii}(:,2);
+
+    if n < 21
+        Capacity1(n+1:end,ii) = repmat(data{ii}(end,1),[21-n,1]);
+        Voltage1(n+1:end,ii) = repmat(data{ii}(end,2),[21-n,1]);
+    end
+        
+%     Voltage = [Voltage;data{ii}(:,2)];
+end
+
+
+Amperage2 = [];
+Voltage2  = [];
+Capacity2 = [];
+
+
+for ii = 1:length(data)
+    n = size(data{ii},1);
+    Amperage2 = [Amperage2;(ii-1)*2.*ones(n,1)];
+    Voltage2  = [Voltage2;data{ii}(:,2)];
+    Capacity2 = [Capacity2;data{ii}(:,1)];
+
+
+end
+
+
+BattModel = scatteredInterpolant(Amperage2,Capacity2,Voltage2)
+
+BattModel(5,2e3)
+
+
+
+
+
