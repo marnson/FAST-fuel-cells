@@ -238,7 +238,9 @@ if (any(PSType == 2))
     % loop through the engines
     for ifc = 1:length(HasFC)
         % size fuel cell (on design) with design point and max power
-        Wfc(ifc) = FuelCellPkg.OnDesignFC(Aircraft,Power(HasFC(ifc)),1e4,0.78);
+%         Wfc(ifc) = FuelCellPkg.OnDesignFC(Aircraft,Power(HasFC(ifc)),1e4,0.78);
+Wfc(ifc) = FuelCellPkg.OnDesignFC(Aircraft,15806525.62/2,1e4,0.78);
+          
     end
     
 else
@@ -255,6 +257,8 @@ Aircraft.Specs.Weight.FuelCells = sum(Wfc);
 % check if the electric motor weight can be changed and remember it
 if (atype > 0)
     Aircraft.Specs.Weight.EM = sum(Power(EM)) / P_Wem;
+% Aircraft.Specs.Weight.EM = 15806525.62 / P_Wem;
+    
 end
 
 % ----------------------------------------------------------
