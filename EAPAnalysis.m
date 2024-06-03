@@ -234,7 +234,6 @@ while (iter < MaxIter)
     
     % get cumulative battery energy (if any)
     if (any(Batt))
-        
         % get the battery energy
         Ebatt = Aircraft.Mission.History.SI.Energy.E_ES(end, Batt);
         
@@ -334,6 +333,7 @@ while (iter < MaxIter)
 
     %% Update L/D %%
     
+    if any(Aircraft.Specs.Propulsion.PropArch.PSType == 2)
     % get powers only at high altitude (main) cruise segments
     Segs = Aircraft.Mission.History.Segment;
     Alts = Aircraft.Mission.History.SI.Performance.Alt;
@@ -365,7 +365,7 @@ while (iter < MaxIter)
     NewL_D = 1/(1/(L_D) + ExtraDrag/(Aircraft.Specs.Weight.MTOW*0.95*9.81));
     Aircraft.Specs.Aero.L_D.Crs = NewL_D;
     Aircraft.Specs.Aero.L_D.Crs = NewL_D*16/18;
-
+    end
 
 
 %%
