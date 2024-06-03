@@ -132,19 +132,22 @@ switch Class
 
             % modify MTOW
             MTOW = MTOW + WengNew - Weng + WemNew - Wem + WfcNew - Wfc;
-
+            
+            % total energy
+            TotalE = (Wfuel*Aircraft.Specs.Power.SpecEnergy.Fuel + Wbatt*Aircraft.Specs.Power.SpecEnergy.Batt);
             % list the targets for the airframe weight estimation
-            target = [S, T, EIS, MTOW];
+            target = [S, T, EIS, MTOW, TotalE];
 
             % list parts of the aircraft structure to use in the regression
             IO = {["Specs", "Aero"      , "S"            ], ...
                 ["Specs", "Propulsion", "Thrust", "SLS"], ...
                 ["Specs", "TLAR"      , "EIS"          ], ...
                 ["Specs", "Weight"    , "MTOW"         ], ...
+                ["Specs", "Power"    , "TotalEnergy"   ], ...
                 ["Specs", "Weight"    , "Airframe"     ]}   ;
 
             % estimate the new airframe weight with a regression
-            WframeNew = RegressionPkg.NLGPR(TurbofanAC, IO, target, [1 1 0.2 1]);
+            WframeNew = RegressionPkg.NLGPR(TurbofanAC, IO, target, [1 1 0.2 1 1]);
 
             if any(FC) % Modify Frame weight if fuel cells
                 Vtank = Wfuel*120e6/43e6/800*UnitConversionPkg.ConvLength(1,'m','ft')^3; % in feet
