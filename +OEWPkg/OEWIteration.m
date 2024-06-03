@@ -53,15 +53,15 @@ FC = Aircraft.Specs.Propulsion.PropArch.PSType == 2;
 
 % check for a calibration factor on OEW/airframe weight
 if (isfield(Aircraft.Specs.Weight, "WairfCF"))
-    
+
     % update the airframe weight
     FrameCF = Aircraft.Specs.Weight.WairfCF;
-    
+
 else
-    
+
     % assume no calibration factor
     FrameCF = 1;
-        
+
 end
 
 
@@ -95,87 +95,88 @@ switch Class
 
     % turbofan aircraft
     case "Turbofan"
-        
+
         % get the turbofan aircraft
         TurbofanAC = Aircraft.HistData.AC;
-        
+
         % get the thrust-weight ratio
         T_W = Aircraft.Specs.Propulsion.T_W.SLS;
-        
+
         % iterate on airframe weight until convergence
         while ((err > Tol) && (iter < MaxIter))
-            
+
             % get the airframe weight
             WframeOld = WframeNew;
-            
+
             % compute MTOW
             MTOW = WframeOld + Wfuel + Wbatt + Wpax + Wcrew + Wem + Weg + Weng + Wfc;
-            
+
             % get the necessary thrust and wing area
             T = MTOW * T_W * g;
             S = MTOW / W_S    ;
-            
+
             % remember the SLS thrust
             Aircraft.Specs.Propulsion.Thrust.SLS = T;
-                        
+
             % size the propulsion system
             Aircraft = PropulsionPkg.PropulsionSizing(Aircraft);
-            
+
             % get the new engine weights
             WengNew = Aircraft.Specs.Weight.Engines;
-            
+
             % get the new electric motor weights
             WemNew = Aircraft.Specs.Weight.EM;
 
             % get new fuel cell weights
             WfcNew = Aircraft.Specs.Weight.FuelCells;
-                        
+
             % modify MTOW
             MTOW = MTOW + WengNew - Weng + WemNew - Wem + WfcNew - Wfc;
-                        
+
             % list the targets for the airframe weight estimation
             target = [S, T, EIS, MTOW];
-            
+
             % list parts of the aircraft structure to use in the regression
             IO = {["Specs", "Aero"      , "S"            ], ...
-                  ["Specs", "Propulsion", "Thrust", "SLS"], ...
-                  ["Specs", "TLAR"      , "EIS"          ], ...
-                  ["Specs", "Weight"    , "MTOW"         ], ...
-                  ["Specs", "Weight"    , "Airframe"     ]}   ;
-              
-             % estimate the new airframe weight with a regression
+                ["Specs", "Propulsion", "Thrust", "SLS"], ...
+                ["Specs", "TLAR"      , "EIS"          ], ...
+                ["Specs", "Weight"    , "MTOW"         ], ...
+                ["Specs", "Weight"    , "Airframe"     ]}   ;
+
+            % estimate the new airframe weight with a regression
             WframeNew = RegressionPkg.NLGPR(TurbofanAC, IO, target, [1 1 0.2 1]);
 
             if any(FC) % Modify Frame weight if fuel cells
                 Vtank = Wfuel*120e6/43e6/800*UnitConversionPkg.ConvLength(1,'m','ft')^3; % in feet
-                WconvTank = 2.405*Vtank^0.606;      
-                WH2Tank = Wfuel*0.7;
-                WframeNew = WframeNew - WconvTank + WH2Tank;  
+                WconvTank = 2.405*Vtank^0.606;
+                WH2Tank = Wfuel*Aircraft.Specs.Weight.EtaTank;
+                WframeNew = WframeNew - WconvTank + WH2Tank;
+
                 Aircraft.Specs.Weight.Tank = WH2Tank;
             end
 
             % update the airframe weight with a calibration factor
             WframeNew = WframeNew * FrameCF;
-            
+
             % check the convergence
             err = abs(WframeOld - WframeNew) / WframeOld;
-            
+
             % iterate
             iter = iter +1;
-            
+
             % remember the power source weights
             Weng = WengNew;
             Wem  =  WemNew;
             Wfc  =  WfcNew;
-            
+
         end
-      
-    % turboprop aircraft
+
+        % turboprop aircraft
     case "Turboprop"
-        
+
         % get the turboprop aircraft
         TurbopropAC = Aircraft.HistData.AC;
-        
+
         % get the power-weight ratio
         P_W = Aircraft.Specs.Power.P_W.SLS;
 
@@ -187,7 +188,7 @@ switch Class
         cind = [];
         for ii = 1:length(mtow)
             if isnan(mtow(ii)) || isnan(af(ii))
-                cind = [cind,ii]; %#ok<AGROW> 
+                cind = [cind,ii]; %#ok<AGROW>
             end
         end
         af(cind) = [];
@@ -198,66 +199,67 @@ switch Class
 
         % run iteration
         while ((err > Tol) && (iter < MaxIter))
-            
+
             % get the airframe weight
             WframeOld = WframeNew;
-            
+
             % compute MTOW
             MTOW = WframeOld + Wfuel + Wbatt + Wpax + Wcrew + Wem + Weg + Weng + Wfc;
-            
+
             % get the necessary power and wing area
             P = MTOW * P_W;
             S = MTOW / W_S;
 
             % remember the SLS power
             Aircraft.Specs.Power.SLS = P;
-            
+
             % size the propulsion system
             Aircraft = PropulsionPkg.PropulsionSizing(Aircraft);
-            
+
             % get the new engine weights
             WengNew = Aircraft.Specs.Weight.Engines;
-            
+
             % get the new electric motor weights
             WemNew = Aircraft.Specs.Weight.EM;
 
             % get new fuel cell weights
             WfcNew = Aircraft.Specs.Weight.FuelCells;
-            
+
             % modify MTOW
             MTOW = MTOW + WengNew - Weng + WemNew - Wem + WfcNew - Wfc;
-            
+
             % compute the new airframe weight
             WframeNew = polyval(Airframe_f_of_MTOW, MTOW);
 
             if any(FC) % Modify Frame weight if fuel cells
                 Vtank = Wfuel*120e6/43e6/800*UnitConversionPkg.ConvLength(1,'m','ft')^3; % in feet
-                WconvTank = 2.405*Vtank^0.606;      
+                WconvTank = 2.405*Vtank^0.606;
                 WH2Tank = Wfuel*Aircraft.Specs.Weight.EtaTank;
-                WframeNew = WframeNew - WconvTank + WH2Tank;               
+                WframeNew = WframeNew - WconvTank + WH2Tank;
+                                Aircraft.Specs.Weight.Tank = WH2Tank;
             end
-            
+
             % update the airframe weight with a calibration factor
             WframeNew = WframeNew * FrameCF;
-            
+
             % check for convergence
             err = abs(WframeOld - WframeNew) / WframeOld;
-            
-            % iterate 
+
+            % iterate
             iter = iter +1;
-            
+
             % remember the new power source weights
             Weng = WengNew;
             Wem  =  WemNew;
             Wfc  =  WfcNew;
-            
+
         end
-        
+
     otherwise
-        
+
         % throw an error
         error('ERROR - OEWIteration: aircraft class not supported.');
-        
+
 end
 
 % throw a warning if iteration limit was reached
