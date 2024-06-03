@@ -263,6 +263,8 @@ switch unitsflag
         Plane.Specs.Power.P_W.EM = NaN;
         Plane.Specs.Power.P_W.EG = NaN;
 
+        Plane.Specs.Power.TotalEnergy = Plane.Specs.Power.SpecEnergy.Fuel*Plane.Specs.Weight.Fuel*3.6e6; % in joules
+
         % Default setting values for the sizing tool.
         Plane.Settings.TkoPoints = NaN;
         Plane.Settings.ClbPoints = NaN;
@@ -334,6 +336,7 @@ switch unitsflag
         Plane.Specs.Power.P_W.AC = "W/kg";
         Plane.Specs.Power.P_W.EM = "kW/kg";
         Plane.Specs.Power.P_W.EG = "kW/kg";
+        Plane.Specs.Power.TotalEnergy = "J";
 
         Plane.Settings.TkoPoints = "count";
         Plane.Settings.ClbPoints = "count";
