@@ -1,4 +1,4 @@
-function [Aircraft] = A320Neo_FuelCell()
+function [Aircraft] = A320_FuelCell()
 %
 % [Aircraft] = A320Neo()
 % written by Max Arnson, marnson@umich.edu
