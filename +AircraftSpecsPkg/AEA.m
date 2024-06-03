@@ -1,9 +1,12 @@
-function [Aircraft] = CHEETA()
+function [Aircraft] = AEA()
 %
-% [Aircraft] = CHEETA()
+% [Aircraft] = AEA()
 % written by Max Arnson, marnson@umich.edu
-% last updated: 14 may 2024
+% last updated: 14 feb 2024
 % 
+% create a baseline model of the ERJ 175, long-range version (also known as
+% an ERJ 170-200). this version uses a conventional propulsion
+% architecture.
 %
 % all required inputs contain "** required **" before the description of
 % the parameter to be specified. all other parameters may remain as NaN,
@@ -30,7 +33,7 @@ Aircraft.Specs.TLAR.Class = 'Turbofan';
 
 % ** required **
 % approximate number of passengers
-Aircraft.Specs.TLAR.MaxPax = UnitConversionPkg.ConvMass(35000,'lbm','kg')/95;
+Aircraft.Specs.TLAR.MaxPax = 1.7586e+04/95;
  
 
 %% VEHICLE PERFORMANCE %%
@@ -40,7 +43,7 @@ Aircraft.Specs.TLAR.MaxPax = UnitConversionPkg.ConvMass(35000,'lbm','kg')/95;
 Aircraft.Specs.Performance.Vels.Tko = UnitConversionPkg.ConvVel(135,'kts','m/s');
 
 % cruise speed (kts)
-Aircraft.Specs.Performance.Vels.Crs = 0.78;
+Aircraft.Specs.Performance.Vels.Crs = 0.747;
 
 % specified speed type, either:
 %     'EAS' = equivalent airspeed
@@ -51,14 +54,14 @@ Aircraft.Specs.Performance.Vels.Type = 'TAS';
 Aircraft.Specs.Performance.Alts.Tko =     0;
 
 % cruise altitude (ft)
-Aircraft.Specs.Performance.Alts.Crs = UnitConversionPkg.ConvLength(37000,'ft','m');
+Aircraft.Specs.Performance.Alts.Crs = 7829;
 
 % ** required **
 % design range (nmi)
-Aircraft.Specs.Performance.Range = UnitConversionPkg.ConvLength(2935,'naut mi','m');
+Aircraft.Specs.Performance.Range = UnitConversionPkg.ConvLength(500,'naut mi','m');
 
 % maximum rate of climb (ft/s), assumed 2,250 ft/min
-Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(500/60,'ft','m');
+Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(2000/60,'ft','m');
 
 
 %% AERODYNAMICS %%
@@ -72,20 +75,20 @@ cbLDcf = 1.00; % aim for +/- 10%
 Aircraft.Specs.Aero.L_D.Clb = 16 * cbLDcf;
 
 % lift-drag ratio during cruise (assumed same as ERJ175, standard range)
-Aircraft.Specs.Aero.L_D.Crs = 18; %18.23 * crLDcf;
+Aircraft.Specs.Aero.L_D.Crs = 18.6; %18.23 * crLDcf;
 
 % assume same lift-drag ratio during climb and descent
 Aircraft.Specs.Aero.L_D.Des = Aircraft.Specs.Aero.L_D.Clb;
 
 % wing loading (lbf / ft^2)
-Aircraft.Specs.Aero.W_S.SLS = UnitConversionPkg.ConvMass(190480,'lbm','kg')/(UnitConversionPkg.ConvLength(1,'ft','m')^2*1840);
+Aircraft.Specs.Aero.W_S.SLS = 109500/125.6;
 
 
 %% WEIGHTS %%
 %%%%%%%%%%%%%
 
 % maximum takeoff weight (lbm)
-Aircraft.Specs.Weight.MTOW = 79000;
+Aircraft.Specs.Weight.MTOW = 109500;
 
 % electric generator weight (lbm)
 Aircraft.Specs.Weight.EG = NaN;
@@ -94,54 +97,45 @@ Aircraft.Specs.Weight.EG = NaN;
 Aircraft.Specs.Weight.EM = NaN;
 
 % block fuel weight (lbm)
-Aircraft.Specs.Weight.Fuel = 19000;
+Aircraft.Specs.Weight.Fuel = 0;
 
 % battery weight (lbm), leave NaN for propulsion systems without batteries
-Aircraft.Specs.Weight.Batt = NaN;
+Aircraft.Specs.Weight.Batt = 36e3;
 
-Aircraft.Specs.Weight.WairfCF = 1.18;
-
-Aircraft.Specs.Weight.EtaTank = 0.65;
 
 %% PROPULSION %%
 %%%%%%%%%%%%%%%%
 
-% ----------------------------------------------------------
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                            %
-% propulsion architecture    %
-%                            %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% ** REQUIRED ** propulsion system architecture, either:
-%     (1) "C"  = conventional
-%     (2) "E"   = fully electric
-%     (3) "TE"  = fully turboelectric
-%     (4) "PE"  = partially turboelectric
-%     (5) "PHE" = parallel hybrid electric
-%     (6) "SHE" = series hybrid electric
-%     (7) "O"   = other architecture (specified by the user)
+% ** required **
+% propulsion architecture, can be either:
+% 'AC'  = conventional
+% 'E'   = fully electric
+% 'PHE' = parallel hybrid electric
+% 'SHE' = series hybrid electric
+% 'TE'  = fully turboelectric
+% 'PE'  = partially turboelectric
 Aircraft.Specs.Propulsion.Arch.Type = "O";
 
 % thrust-power source matrix
 Aircraft.Specs.Propulsion.PropArch.TSPS = ...
     [1 0 0 0
-     0 1 0 0];
+     0 1 0 0
+     0 0 1 0
+     0 0 0 1];
 
 % power-power source matrix
 Aircraft.Specs.Propulsion.PropArch.PSPS = ...
-    [1 0 1 0
-     0 1 0 1
+    [1 0 0 0
+     0 1 0 0
      0 0 1 0
      0 0 0 1];
 
 % power-energy source matrix
 Aircraft.Specs.Propulsion.PropArch.PSES = ...
-    [0; 0; 1; 1];
+    [1; 1; 1; 1];
 
 % thrust      source operation
-Aircraft.Specs.Propulsion.Oper.TS   = @() [0.5, 0.5];
+Aircraft.Specs.Propulsion.Oper.TS   = @() [0.25,0.25,0.25,0.25];
 
 % thrust-power source operation
 Aircraft.Specs.Propulsion.Oper.TSPS = @() Aircraft.Specs.Propulsion.PropArch.TSPS;
@@ -153,7 +147,12 @@ Aircraft.Specs.Propulsion.Oper.PSPS = @() Aircraft.Specs.Propulsion.PropArch.PSP
 Aircraft.Specs.Propulsion.Oper.PSES = @() Aircraft.Specs.Propulsion.PropArch.PSES;
 
 % thrust-power  source efficiency
-Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.9, 1, 1, 1; 1, 0.9, 1, 1];
+Aircraft.Specs.Propulsion.Eta.TSPS  = [
+0.66 1 1 1
+1 0.66 1 1
+1 1 0.66 1
+1 1 1 0.66
+];
 
 % power -power  source efficiency
 Aircraft.Specs.Propulsion.Eta.PSPS  = ones(4);
@@ -162,43 +161,37 @@ Aircraft.Specs.Propulsion.Eta.PSPS  = ones(4);
 Aircraft.Specs.Propulsion.Eta.PSES  = ones(4,1);
 
 % energy source type (1 = fuel, 0 = battery)
-Aircraft.Specs.Propulsion.PropArch.ESType = [1];
+Aircraft.Specs.Propulsion.PropArch.ESType = [0];
 
 % power source type (1 = engine, 0 = electric motor)
-Aircraft.Specs.Propulsion.PropArch.PSType = [0, 0, 2, 2];
+Aircraft.Specs.Propulsion.PropArch.PSType = [0, 0, 0, 0];
 
-% ----------------------------------------------------------
+%------------------------------------------
 
 % get the engine
-Aircraft.Specs.Propulsion.Engine = NaN;
+Aircraft.Specs.Propulsion.Engine = NaN; 
 
 % number of engines
-Aircraft.Specs.Propulsion.NumEngines = 0;
+Aircraft.Specs.Propulsion.NumEngines = 4;
 
 % thrust-weight ratio (if a turbojet/turbofan)
-Aircraft.Specs.Propulsion.T_W.SLS = 2.37e5/(73500*9.81)*1.09;
+Aircraft.Specs.Propulsion.T_W.SLS = 0.3;
 
 % total sea-level static thrust available (lbf)
 Aircraft.Specs.Propulsion.Thrust.SLS = NaN;
 
 % engine propulsive efficiency
-Aircraft.Specs.Propulsion.Eta.Prop = NaN;
-
-Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
-
-Aircraft.Specs.Propulsion.MDotCF = 1.45;
-
-Aircraft.Specs.Propulsion.FC_Oversize = 1.1;
+Aircraft.Specs.Propulsion.Eta.Prop = 0.8;
 
 
 %% POWER %%
 %%%%%%%%%%%
 
 % gravimetric specific energy of combustible fuel (kWh/kg)
-Aircraft.Specs.Power.SpecEnergy.Fuel = 33.3333;
+Aircraft.Specs.Power.SpecEnergy.Fuel = 12;
 
 % gravimetric specific energy of battery (kWh/kg), not used here
-Aircraft.Specs.Power.SpecEnergy.Batt = NaN;
+Aircraft.Specs.Power.SpecEnergy.Batt = 0.8;
 
 % electric motor and generator efficiencies, not used here just in HEA one
 Aircraft.Specs.Power.Eta.EM = NaN;
@@ -209,7 +202,7 @@ Aircraft.Specs.Power.P_W.SLS = NaN;
 
 % power-weight ratio for the electric motor and generator (kW/kg)
 % leave as NaN if an electric motor or generator isn't in the powertrain
-Aircraft.Specs.Power.P_W.EM = 26;
+Aircraft.Specs.Power.P_W.EM = NaN;
 Aircraft.Specs.Power.P_W.EG = NaN;
 
 % thrust splits (thrust / total thrust)
@@ -245,11 +238,11 @@ Aircraft.Specs.Power.LamPSES.Lnd = 0;
 Aircraft.Specs.Power.LamPSES.SLS = 0;
 
 % battery cells in series and parallel 
-Aircraft.Specs.Power.Battery.ParCells = NaN;
-Aircraft.Specs.Power.Battery.SerCells = NaN;
+Aircraft.Specs.Power.Battery.ParCells = NaN; %100;
+Aircraft.Specs.Power.Battery.SerCells = NaN;%2778;
 
 % initial battery SOC
-Aircraft.Specs.Power.Battery.BegSOC = NaN;
+Aircraft.Specs.Power.Battery.BegSOC = NaN;%100;
 
 
 %% SETTINGS (LEAVE AS NaN FOR DEFAULTS) %%
@@ -284,8 +277,8 @@ Aircraft.Settings.Table = 0;
 
 Aircraft.Settings.VisualizeAircraft = 0;
 
+Aircraft.Settings.Offtake = 0;
 
-Aircraft.Settings.Offtake = 2;
 % ----------------------------------------------------------
-end
 
+end

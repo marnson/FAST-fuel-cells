@@ -1,4 +1,4 @@
-function [Aircraft] = ATR42()
+function [Aircraft] = ATR42_FuelCell()
 %
 % [Aircraft] = ATR42()
 % originally written by ???
@@ -64,7 +64,7 @@ Aircraft.Specs.Performance.Alts.Crs = UnitConversionPkg.ConvLength(25000, "ft", 
 Aircraft.Specs.Performance.Range = 1326e3;
 
 % maximum rate-of-climb (m/s)
-Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvVel(1475/60, "ft/s", "m/s");
+Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvVel(500/60, "ft/s", "m/s");
 
 % ----------------------------------------------------------
 
@@ -122,20 +122,61 @@ Aircraft.Specs.Weight.EG = NaN;
 %     (5) "PHE" = parallel hybrid electric
 %     (6) "SHE" = series hybrid electric
 %     (7) "O"   = other architecture (specified by the user)
-Aircraft.Specs.Propulsion.Arch.Type = "C";
+Aircraft.Specs.Propulsion.Arch.Type = "O";
 
-% aircraft thrust-weight ratio
-Aircraft.Specs.Propulsion.T_W.SLS = NaN;
+% thrust-power source matrix
+Aircraft.Specs.Propulsion.PropArch.TSPS = ...
+    [1 0 0 0
+     0 1 0 0];
 
-% total sea-level static power
-Aircraft.Specs.Power.SLS = NaN;
+% power-power source matrix
+Aircraft.Specs.Propulsion.PropArch.PSPS = ...
+    [1 0 1 0
+     0 1 0 1
+     0 0 1 0
+     0 0 0 1];
 
-% engine propulsive efficiency
-Aircraft.Specs.Propulsion.Eta.Prop = 0.8;
+% power-energy source matrix
+Aircraft.Specs.Propulsion.PropArch.PSES = ...
+    [0; 0; 1; 1];
 
-% engine (defined in the EngineSpecsPkg)
-Aircraft.Specs.Propulsion.Engine = EngineModelPkg.EngineSpecsPkg.PW_127M;
+% thrust      source operation
+Aircraft.Specs.Propulsion.Oper.TS   = @() [0.5, 0.5];
 
+% thrust-power source operation
+Aircraft.Specs.Propulsion.Oper.TSPS = @() Aircraft.Specs.Propulsion.PropArch.TSPS;
+
+% power-power  source operation
+Aircraft.Specs.Propulsion.Oper.PSPS = @() Aircraft.Specs.Propulsion.PropArch.PSPS;
+
+% power-energy source operation
+Aircraft.Specs.Propulsion.Oper.PSES = @() Aircraft.Specs.Propulsion.PropArch.PSES;
+
+% thrust-power  source efficiency
+Aircraft.Specs.Propulsion.Eta.TSPS  = ones(2,4);
+
+% power -power  source efficiency
+Aircraft.Specs.Propulsion.Eta.PSPS  = ones(4);
+
+% power -energy source efficiency
+Aircraft.Specs.Propulsion.Eta.PSES  = ones(4,1);
+
+% energy source type (1 = fuel, 0 = battery)
+Aircraft.Specs.Propulsion.PropArch.ESType = [1];
+
+% power source type (1 = engine, 0 = electric motor)
+Aircraft.Specs.Propulsion.PropArch.PSType = [0, 0, 2, 2];
+
+Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
+
+
+Aircraft.Specs.Weight.WairfCF = 1.18;
+
+Aircraft.Specs.Propulsion.FC_Oversize = 0.25;
+
+Aircraft.Settings.Offtake = 2;
+
+Aircraft.Specs.Weight.EtaTank = 0.65;
 % ----------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,7 +186,7 @@ Aircraft.Specs.Propulsion.Engine = EngineModelPkg.EngineSpecsPkg.PW_127M;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % gravimetric specific energy of combustible fuel (kWh/kg)  
-Aircraft.Specs.Power.SpecEnergy.Fuel = (43.2e+6) / (3.6e+6);
+Aircraft.Specs.Power.SpecEnergy.Fuel = 33.333;
 
 % gravimetric specific energy of battery (kWh/kg)
 Aircraft.Specs.Power.SpecEnergy.Batt = 0.35;
@@ -188,8 +229,6 @@ Aircraft.Settings.Analysis.Type = +1;
 % 0 = no plotting
 % 1 =    plotting
 Aircraft.Settings.Plotting = 1;
-
-Aircraft.Settings.Offtake = NaN;
 
 % ----------------------------------------------------------
 
