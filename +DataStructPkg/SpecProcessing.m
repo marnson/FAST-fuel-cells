@@ -355,6 +355,7 @@ DefaultSettings.Analysis.Type = 1;       % 1 = on design. -1 = off design
 DefaultSettings.Plotting = 0;            % 1 = plot 0 = no plots
 DefaultSettings.Table = 0;
 DefaultSettings.VisualizeAircraft = 0;
+DefaultSettings.Offtake = 0;
 
 % optimization settings.
 DefaultSettings.PowerOpt.DesPowSplit =  0;
@@ -622,12 +623,15 @@ Aircraft.HistData.FC = FC_Data;
 
 %% Engine Specs
 
+if Aircraft.Specs.Propulsion.Arch.Type == 'O'
 EngineFlags = Aircraft.Specs.Propulsion.PropArch.PSType == 1;
+
 
 if any(EngineFlags)
     Aircraft = DataStructPkg.EngineSpecProcessing(Aircraft);
 else
     Aircraft.Specs.Propulsion.Engine = "Nonexistent";
+end
 end
 
 
