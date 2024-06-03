@@ -6,9 +6,9 @@ function [EP] = SubSystemOfftake(PowerTO,SizingFlag)
 
 switch SizingFlag
     case "Sizing"
-        EP_Fxn = @(P) 0.4148*P^0.6598;
+        EP_Fxn = @(P) 1.5817*P^0.53734;
     case "OffDesign"
-        EP_Fxn = @(P) 0.2668*P^0.7008;
+        EP_Fxn = @(P) 1.1863*P^0.53734;
 end
 
 % Convert to Kilowatts
