@@ -225,6 +225,8 @@ Aircraft.Settings.Table = 0;
 
 Aircraft.Settings.VisualizeAircraft = 0;
 
+Aircraft.Settings.Offtake = 0;
+
 % ----------------------------------------------------------
 
 end
