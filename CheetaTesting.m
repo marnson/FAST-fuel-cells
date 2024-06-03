@@ -1,3 +1,57 @@
+%% ATR conventional
+clc; clear; close all;
+
+ATR = Main(AircraftSpecsPkg.ATR42,@MissionProfilesPkg.ATR42_600);
+
+% ATR = Main(AircraftSpecsPkg.ATR42,@MissionProfilesPkg.NotionalMission00);
+
+
+% Error
+actuals = [18600,11750, 577, 786, 1019];
+W = ATR.Specs.Weight;
+exper = [W.MTOW, W.OEW];
+
+
+
+%t1 = MissionHistTable(ATR);
+
+%writetimetable(t1,fullfile("+AircraftModelingPkg","+ATR42Modeling", "atr42sizingtable.xlsx"),'WriteVariableNames',true)
+% 
+% 
+ATR.Settings.Analysis.Type = -2;
+ATR.Specs.Performance.Range = UnitConversionPkg.ConvLength(200,'naut mi','m');
+ATR.Specs.Performance.Vels.Crs = 0.5;
+tempac = Main(ATR,@MissionProfilesPkg.NotionalMission00);
+exper = [exper, tempac.Specs.Weight.Fuel];
+
+
+ATR.Specs.Performance.Range = UnitConversionPkg.ConvLength(300,'naut mi','m');
+tempac = Main(ATR,@MissionProfilesPkg.NotionalMission00);
+exper = [exper, tempac.Specs.Weight.Fuel];
+
+
+ATR.Specs.Performance.Range = UnitConversionPkg.ConvLength(400,'naut mi','m');
+tempac = Main(ATR,@MissionProfilesPkg.NotionalMission00);
+exper = [exper, tempac.Specs.Weight.Fuel];
+
+err = (exper - actuals)./actuals
+
+%% A320 Conventional
+
+clc; clear; close all;
+
+A320 = Main(AircraftSpecsPkg.A320Neo,@MissionProfilesPkg.A320);
+
+
+% Error
+actuals = [79000,19051,42600, 2990*2];
+W = A320.Specs.Weight;
+exper = [W.MTOW, W.Fuel, W.OEW, W.Engines];
+
+
+err = (exper - actuals)./actuals.*100
+
+
 %% Validating cheeta
 
 clear; clc; close all;
