@@ -37,7 +37,9 @@ function [Aircraft] = A320(Aircraft)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % define the targets (in m or min)
-Ranges = UnitConversionPkg.ConvLength([3400/3; 3400/3; 3400/3; 200],'naut mi', 'm');
+ACR = Aircraft.Specs.Performance.Range;
+%ACR = 3400;
+Ranges = [ACR/3; ACR/3; ACR/3; UnitConversionPkg.ConvLength(200,'naut mi', 'm')];
 Mission.Target.Valu = [Ranges; 30];
 
 % define the target types ("Dist" or "Time")

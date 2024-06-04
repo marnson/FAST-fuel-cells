@@ -1,4 +1,4 @@
-function [Aircraft] = AEA(etaprop)
+function [Aircraft] = A320_Elec(etaprop)
 %
 % [Aircraft] = AEA()
 % written by Max Arnson, marnson@umich.edu
@@ -33,7 +33,7 @@ Aircraft.Specs.TLAR.Class = 'Turbofan';
 
 % ** required **
 % approximate number of passengers
-Aircraft.Specs.TLAR.MaxPax = 1.7586e+04/95;
+Aircraft.Specs.TLAR.MaxPax = 15309/95;
  
 
 %% VEHICLE PERFORMANCE %%
@@ -43,7 +43,7 @@ Aircraft.Specs.TLAR.MaxPax = 1.7586e+04/95;
 Aircraft.Specs.Performance.Vels.Tko = UnitConversionPkg.ConvVel(135,'kts','m/s');
 
 % cruise speed (kts)
-Aircraft.Specs.Performance.Vels.Crs = 0.747;
+Aircraft.Specs.Performance.Vels.Crs = 0.82;
 
 % specified speed type, either:
 %     'EAS' = equivalent airspeed
@@ -54,14 +54,14 @@ Aircraft.Specs.Performance.Vels.Type = 'TAS';
 Aircraft.Specs.Performance.Alts.Tko =     0;
 
 % cruise altitude (ft)
-Aircraft.Specs.Performance.Alts.Crs = 7829;
+Aircraft.Specs.Performance.Alts.Crs = UnitConversionPkg.ConvLength(35000,'ft','m')
 
 % ** required **
 % design range (nmi)
-Aircraft.Specs.Performance.Range = UnitConversionPkg.ConvLength(500,'naut mi','m');
+Aircraft.Specs.Performance.Range = 4815e3; % UnitConversionPkg.ConvLength(500,'naut mi','m');
 
 % maximum rate of climb (ft/s), assumed 2,250 ft/min
-Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(2000/60,'ft','m');
+Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(2250/60,'ft','m');
 
 
 %% AERODYNAMICS %%
@@ -75,13 +75,13 @@ cbLDcf = 1.00; % aim for +/- 10%
 Aircraft.Specs.Aero.L_D.Clb = 16 * cbLDcf;
 
 % lift-drag ratio during cruise (assumed same as ERJ175, standard range)
-Aircraft.Specs.Aero.L_D.Crs = 18.6; %18.23 * crLDcf;
+Aircraft.Specs.Aero.L_D.Crs = 18.23; %18.23 * crLDcf;
 
 % assume same lift-drag ratio during climb and descent
 Aircraft.Specs.Aero.L_D.Des = Aircraft.Specs.Aero.L_D.Clb;
 
 % wing loading (lbf / ft^2)
-Aircraft.Specs.Aero.W_S.SLS = 109500/125.6;
+Aircraft.Specs.Aero.W_S.SLS = 79000/126.5;
 
 
 %% WEIGHTS %%
@@ -102,7 +102,7 @@ Aircraft.Specs.Weight.Fuel = 0;
 % battery weight (lbm), leave NaN for propulsion systems without batteries
 Aircraft.Specs.Weight.Batt = 36e3;
 
-Aircraft.Specs.Weight.WairfCF = 1.07;
+Aircraft.Specs.Weight.WairfCF = 1.01;
 
 
 %% PROPULSION %%
@@ -178,10 +178,10 @@ Aircraft.Specs.Propulsion.PropArch.PSType = [0, 0, 0, 0];
 Aircraft.Specs.Propulsion.Engine = NaN; 
 
 % number of engines
-Aircraft.Specs.Propulsion.NumEngines = 4;
+Aircraft.Specs.Propulsion.NumEngines = 2;
 
 % thrust-weight ratio (if a turbojet/turbofan)
-Aircraft.Specs.Propulsion.T_W.SLS = 0.3;
+Aircraft.Specs.Propulsion.T_W.SLS = 2.37e5/(73500*9.81);
 
 % total sea-level static thrust available (lbf)
 Aircraft.Specs.Propulsion.Thrust.SLS = NaN;
@@ -244,11 +244,8 @@ Aircraft.Specs.Power.LamPSES.Lnd = 0;
 Aircraft.Specs.Power.LamPSES.SLS = 0;
 
 % battery cells in series and parallel 
-Aircraft.Specs.Power.Battery.ParCells = 100; %100;
-
-Aircraft.Specs.Power.Battery.SerCells = 200;
-
-
+Aircraft.Specs.Power.Battery.ParCells = 40; %100;
+Aircraft.Specs.Power.Battery.SerCells = 70;%2778;
 
 % initial battery SOC
 Aircraft.Specs.Power.Battery.BegSOC = 100;%100;
@@ -280,7 +277,7 @@ Aircraft.Settings.Analysis.Type = +1;
 % plotting, either:
 %     1 for plotting on
 %     0 for plotting off
-Aircraft.Settings.Plotting = 1;
+Aircraft.Settings.Plotting = 0;
 
 Aircraft.Settings.Table = 0;
 
