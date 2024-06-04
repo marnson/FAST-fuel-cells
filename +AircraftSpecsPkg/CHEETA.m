@@ -45,62 +45,63 @@ Aircraft.Specs.Performance.Vels.Crs = 0.78;
 % specified speed type, either:
 %     'EAS' = equivalent airspeed
 %     'TAS' = true       airspeed
-Aircraft.Specs.Performance.Vels.Type = 'TAS';
+Aircraft.Specs.Performance.Vels.Type = 'TAS'; %ignore this
 
-% takeoff altitude (ft)
+% takeoff altitude (m)
 Aircraft.Specs.Performance.Alts.Tko =     0;
 
-% cruise altitude (ft)
+% cruise altitude (m)
 Aircraft.Specs.Performance.Alts.Crs = UnitConversionPkg.ConvLength(37000,'ft','m');
 
 % ** required **
-% design range (nmi)
+% design range (m)
 Aircraft.Specs.Performance.Range = UnitConversionPkg.ConvLength(2935,'naut mi','m');
 
-% maximum rate of climb (ft/s), assumed 2,250 ft/min
+% maximum rate of climb (m/s), assumed 2,250 ft/min
 Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(500/60,'ft','m');
 
 
 %% AERODYNAMICS %%
 %%%%%%%%%%%%%%%%%%
 
-% calibration factors for lift-drag ratios
-crLDcf = 1.00; % aim for +/- 10%
-cbLDcf = 1.00; % aim for +/- 10%
 
-% lift-drag ratio during climb  (assumed same as ERJ175, standard range)
-Aircraft.Specs.Aero.L_D.Clb = 16 * cbLDcf;
+% lift-drag ratio during climb 
+Aircraft.Specs.Aero.L_D.Clb = 16;
 
-% lift-drag ratio during cruise (assumed same as ERJ175, standard range)
-Aircraft.Specs.Aero.L_D.Crs = 18; %18.23 * crLDcf;
+% lift-drag ratio during cruise 
+% this changes during the flight as the heat exchanger adds additional drag
+% according to elias's model
+Aircraft.Specs.Aero.L_D.Crs = 18;
 
 % assume same lift-drag ratio during climb and descent
 Aircraft.Specs.Aero.L_D.Des = Aircraft.Specs.Aero.L_D.Clb;
 
-% wing loading (lbf / ft^2)
+% wing loading (kg / m^2)
 Aircraft.Specs.Aero.W_S.SLS = UnitConversionPkg.ConvMass(190480,'lbm','kg')/(UnitConversionPkg.ConvLength(1,'ft','m')^2*1840);
 
 
 %% WEIGHTS %%
 %%%%%%%%%%%%%
 
-% maximum takeoff weight (lbm)
+% maximum takeoff weight (kg)
 Aircraft.Specs.Weight.MTOW = 79000;
 
-% electric generator weight (lbm)
+% electric generator weight (kg)
 Aircraft.Specs.Weight.EG = NaN;
 
-% electric motor weight (lbm)
+% electric motor weight (kg)
 Aircraft.Specs.Weight.EM = NaN;
 
-% block fuel weight (lbm)
+% block fuel weight, initial guess (kg)
 Aircraft.Specs.Weight.Fuel = 19000;
 
-% battery weight (lbm), leave NaN for propulsion systems without batteries
+% battery weight (kg), leave NaN for propulsion systems without batteries
 Aircraft.Specs.Weight.Batt = NaN;
 
+% Airframe weight calibration factor
 Aircraft.Specs.Weight.WairfCF = 1.03;
 
+% Gravimetric efficiency of h2 tank
 Aircraft.Specs.Weight.EtaTank = 0.65;
 
 %% PROPULSION %%
@@ -153,6 +154,7 @@ Aircraft.Specs.Propulsion.Oper.PSPS = @() Aircraft.Specs.Propulsion.PropArch.PSP
 Aircraft.Specs.Propulsion.Oper.PSES = @() Aircraft.Specs.Propulsion.PropArch.PSES;
 
 % thrust-power  source efficiency
+% NOTICE that the efficiency between fans and thrust production is 90%
 Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.9, 1, 1, 1; 1, 0.9, 1, 1];
 
 % power -power  source efficiency
@@ -178,16 +180,19 @@ Aircraft.Specs.Propulsion.NumEngines = 0;
 % thrust-weight ratio (if a turbojet/turbofan)
 Aircraft.Specs.Propulsion.T_W.SLS = 2.37e5/(73500*9.81)*1.09;
 
-% total sea-level static thrust available (lbf)
+% total sea-level static thrust available (N)
 Aircraft.Specs.Propulsion.Thrust.SLS = NaN;
 
 % engine propulsive efficiency
 Aircraft.Specs.Propulsion.Eta.Prop = NaN;
 
+% Fuel cell specification file
 Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
 
+% Calibration factor on fuel cell hydrogen consumption
 Aircraft.Specs.Propulsion.MDotCF = 1.58;
 
+% oversize factor on power at the design point for the fuel cell system
 Aircraft.Specs.Propulsion.FC_Oversize = 1.1;
 
 
@@ -195,7 +200,7 @@ Aircraft.Specs.Propulsion.FC_Oversize = 1.1;
 %%%%%%%%%%%
 
 % gravimetric specific energy of combustible fuel (kWh/kg)
-Aircraft.Specs.Power.SpecEnergy.Fuel = 33.3333;
+Aircraft.Specs.Power.SpecEnergy.Fuel = 33.3333; % LH2
 
 % gravimetric specific energy of battery (kWh/kg), not used here
 Aircraft.Specs.Power.SpecEnergy.Batt = NaN;
@@ -280,11 +285,14 @@ Aircraft.Settings.Analysis.Type = +1;
 %     0 for plotting off
 Aircraft.Settings.Plotting = 1;
 
+% ignore this
 Aircraft.Settings.Table = 0;
 
+% ignore this
 Aircraft.Settings.VisualizeAircraft = 0;
 
-
+% this tells the code to add additional power for the ECS etc. it uses the
+% models in the draft of the paper in the electrified subsystems section
 Aircraft.Settings.Offtake = 2;
 % ----------------------------------------------------------
 end

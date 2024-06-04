@@ -75,7 +75,7 @@ cbLDcf = 1.00; % aim for +/- 10%
 Aircraft.Specs.Aero.L_D.Clb = 16 * cbLDcf;
 
 % lift-drag ratio during cruise (assumed same as ERJ175, standard range)
-Aircraft.Specs.Aero.L_D.Crs = NaN; %18.23 * crLDcf;
+Aircraft.Specs.Aero.L_D.Crs = 18.23; %18.23 * crLDcf;
 
 % assume same lift-drag ratio during climb and descent
 Aircraft.Specs.Aero.L_D.Des = Aircraft.Specs.Aero.L_D.Clb;
@@ -130,6 +130,9 @@ Aircraft.Specs.Propulsion.Thrust.SLS = 2.37e5;
 
 % engine propulsive efficiency
 Aircraft.Specs.Propulsion.Eta.Prop = 0.8;
+
+Aircraft.Specs.Propulsion.MDotCF = 1.01;
+Aircraft.Specs.Weight.WairfCF = 1.01;
 
 
 %% POWER %%

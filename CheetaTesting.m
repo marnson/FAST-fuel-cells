@@ -9,7 +9,7 @@ ATR = Main(AircraftSpecsPkg.ATR42,@MissionProfilesPkg.ATR42_600);
 % Error
 actuals = [18600,11750, 577, 786, 1019];
 W = ATR.Specs.Weight;
-exper = [W.MTOW, W.OEW];
+FAST_Model = [W.MTOW, W.OEW];
 
 
 
@@ -22,19 +22,19 @@ ATR.Settings.Analysis.Type = -2;
 ATR.Specs.Performance.Range = UnitConversionPkg.ConvLength(200,'naut mi','m');
 ATR.Specs.Performance.Vels.Crs = 0.5;
 tempac = Main(ATR,@MissionProfilesPkg.NotionalMission00);
-exper = [exper, tempac.Specs.Weight.Fuel];
+FAST_Model = [FAST_Model, tempac.Specs.Weight.Fuel];
 
 
 ATR.Specs.Performance.Range = UnitConversionPkg.ConvLength(300,'naut mi','m');
 tempac = Main(ATR,@MissionProfilesPkg.NotionalMission00);
-exper = [exper, tempac.Specs.Weight.Fuel];
+FAST_Model = [FAST_Model, tempac.Specs.Weight.Fuel];
 
 
 ATR.Specs.Performance.Range = UnitConversionPkg.ConvLength(400,'naut mi','m');
 tempac = Main(ATR,@MissionProfilesPkg.NotionalMission00);
-exper = [exper, tempac.Specs.Weight.Fuel];
+FAST_Model = [FAST_Model, tempac.Specs.Weight.Fuel];
 
-err = (exper - actuals)./actuals
+err = (FAST_Model - actuals)./actuals.*100
 
 %% A320 Conventional
 
@@ -46,16 +46,16 @@ A320 = Main(AircraftSpecsPkg.A320Neo,@MissionProfilesPkg.A320);
 % Error
 actuals = [79000,19051,42600, 2990*2];
 W = A320.Specs.Weight;
-exper = [W.MTOW, W.Fuel, W.OEW, W.Engines];
+FAST_Model = [W.MTOW, W.Fuel, W.OEW, W.Engines];
 
 
-err = (exper - actuals)./actuals.*100
+err = (FAST_Model - actuals)./actuals.*100
 
 
 %% Validating cheeta
 
 clear; clc; close all;
-truew = UnitConversionPkg.ConvMass([
+CHEETA = UnitConversionPkg.ConvMass([
 1847.522594
 	15715.22337
 	10241.60151
@@ -68,25 +68,31 @@ truew = UnitConversionPkg.ConvMass([
 CH = Main(AircraftSpecsPkg.CHEETA,@MissionProfilesPkg.NotionalMission02);
 W = CH.Specs.Weight;
 
-exper = [W.EM, W.FuelCells, W.Tank, W.Fuel, W.OEW + W.FuelCells ,W.MTOW];
+FAST_Model = [W.EM, W.FuelCells, W.Tank, W.Fuel, W.OEW + W.FuelCells ,W.MTOW];
 
-err = (exper - truew)./truew.*100
+ErrorPercent = (FAST_Model - CHEETA)./CHEETA.*100
 
-[
+Weight = [
 "Motors"
 "FC"
 "Tanks"
 "Fuel"
 "OEW"
 "MTOW"
-]'
+];
 
+ErrorTab = table(Weight, CHEETA', FAST_Model', ErrorPercent')
+ErrorTab.Properties.VariableNames(2) = "CHEETA";
+ErrorTab.Properties.VariableNames(3) = "FAST Model";
+ErrorTab.Properties.VariableNames(4) = "Error (%)";
 % Motors		
 % FuelCells	
 % FuelTanks	
 % FuelWeight	
 % OEW
 % MTOW		
+
+
 
 
 
@@ -107,8 +113,8 @@ EP = En/W.Payload/AE.Specs.Performance.Range/9.81;
 En = En/3.6e9;
 
 trueparam = [109.5e3,36e3,28.8,0.649];
-exper =[W.MTOW,W.Batt, En,EP]
-err = (exper - trueparam)./trueparam.*100
+FAST_Model =[W.MTOW,W.Batt, En,EP]
+err = (FAST_Model - trueparam)./trueparam.*100
 
 %% Running Trade study for the a320 fuel cell
 
