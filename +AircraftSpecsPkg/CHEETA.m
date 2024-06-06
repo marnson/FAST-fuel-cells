@@ -155,7 +155,7 @@ Aircraft.Specs.Propulsion.Oper.PSES = @() Aircraft.Specs.Propulsion.PropArch.PSE
 
 % thrust-power  source efficiency
 % NOTICE that the efficiency between fans and thrust production is 90%
-Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.9, 1, 1, 1; 1, 0.9, 1, 1];
+Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.77, 1, 1, 1; 1, 0.77, 1, 1];
 
 % power -power  source efficiency
 Aircraft.Specs.Propulsion.Eta.PSPS  = ones(4);
@@ -190,7 +190,7 @@ Aircraft.Specs.Propulsion.Eta.Prop = NaN;
 Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
 
 % Calibration factor on fuel cell hydrogen consumption
-Aircraft.Specs.Propulsion.MDotCF = 1.58;
+Aircraft.Specs.Propulsion.MDotCF = 1.22;
 
 % oversize factor on power at the design point for the fuel cell system
 Aircraft.Specs.Propulsion.FC_Oversize = 1.1;
@@ -214,7 +214,7 @@ Aircraft.Specs.Power.P_W.SLS = NaN;
 
 % power-weight ratio for the electric motor and generator (kW/kg)
 % leave as NaN if an electric motor or generator isn't in the powertrain
-Aircraft.Specs.Power.P_W.EM = 26;
+Aircraft.Specs.Power.P_W.EM = 30;
 Aircraft.Specs.Power.P_W.EG = NaN;
 
 % thrust splits (thrust / total thrust)
