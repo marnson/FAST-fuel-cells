@@ -58,7 +58,7 @@ Aircraft.Specs.Performance.Alts.Crs = UnitConversionPkg.ConvLength(37000,'ft','m
 Aircraft.Specs.Performance.Range = UnitConversionPkg.ConvLength(2935,'naut mi','m');
 
 % maximum rate of climb (m/s), assumed 2,250 ft/min
-Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(500/60,'ft','m');
+Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(1000/60,'ft','m');
 
 
 %% AERODYNAMICS %%
@@ -155,7 +155,7 @@ Aircraft.Specs.Propulsion.Oper.PSES = @() Aircraft.Specs.Propulsion.PropArch.PSE
 
 % thrust-power  source efficiency
 % NOTICE that the efficiency between fans and thrust production is 90%
-Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.77, 1, 1, 1; 1, 0.77, 1, 1];
+Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.675, 1, 1, 1; 1, 0.675, 1, 1];
 
 % power -power  source efficiency
 Aircraft.Specs.Propulsion.Eta.PSPS  = ones(4);
@@ -178,7 +178,7 @@ Aircraft.Specs.Propulsion.Engine = NaN;
 Aircraft.Specs.Propulsion.NumEngines = 0;
 
 % thrust-weight ratio (if a turbojet/turbofan)
-Aircraft.Specs.Propulsion.T_W.SLS = 2.37e5/(73500*9.81)*1.09;
+Aircraft.Specs.Propulsion.T_W.SLS = 0.056;%0.1352;
 
 % total sea-level static thrust available (N)
 Aircraft.Specs.Propulsion.Thrust.SLS = NaN;
@@ -193,7 +193,7 @@ Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
 Aircraft.Specs.Propulsion.MDotCF = 1.22;
 
 % oversize factor on power at the design point for the fuel cell system
-Aircraft.Specs.Propulsion.FC_Oversize = 1.1;
+Aircraft.Specs.Propulsion.FC_Oversize = 1.2;
 
 
 %% POWER %%
@@ -214,7 +214,7 @@ Aircraft.Specs.Power.P_W.SLS = NaN;
 
 % power-weight ratio for the electric motor and generator (kW/kg)
 % leave as NaN if an electric motor or generator isn't in the powertrain
-Aircraft.Specs.Power.P_W.EM = 30;
+Aircraft.Specs.Power.P_W.EM = 20;
 Aircraft.Specs.Power.P_W.EG = NaN;
 
 % thrust splits (thrust / total thrust)

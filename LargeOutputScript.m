@@ -72,6 +72,8 @@ ErrorTab.Properties.VariableNames(4) = "Error (%)";
 ErrorTab
 
 
+
+
 %% 1.D) AEA Full Electric Baseline
 clear; clc; close all;
 
@@ -120,6 +122,57 @@ clear; clc; close all;
 %% 3.A) BRE Comparison A320 Fuel Cell
 clear; clc; close all;
 
+clear; clc; close all;
+
+EtaProp = 0.8;
+
+Specs = AircraftSpecsPkg.CHEETA();
+Mission = @ MissionProfilesPkg.NotionalMission02;
+
+N = 15;
+R_Nominal = Specs.Specs.Performance.Range;
+RangeGrid = linspace(0.3*R_Nominal,R_Nominal*2,N);
+
+LD = Specs.Specs.Aero.L_D.Crs;
+eFuel = 33.33*3.6e6;
+
+MBM_FAST = zeros(1,N);
+MBM_BRE  = zeros(1,N);
+MBM_BRE_Norsv  = zeros(1,N);
+
+for ii = 1:N
+    R = RangeGrid(ii);
+    Specs.Specs.Performance.Range = R;
+    Sized = Main(Specs,Mission);
+    MBM_FAST(ii) = Sized.Specs.Weight.Fuel/Sized.Specs.Weight.MTOW;
+    
+    MBM_BRE_Norsv(ii) = exp(R/eFuel*9.81/EtaProp/LD);
+    R = R + UnitConversionPkg.ConvLength(200,'naut mi', 'm') + 30*60*150;
+    MBM_BRE(ii) = exp(R/eFuel*9.81/EtaProp/LD);
+   
+end
+
+close all;
+figure(1)
+
+subplot(1,2,1)
+plot(RangeGrid./1e3,MBM_FAST)
+hold on
+plot(RangeGrid./1e3,MBM_BRE)
+plot(RangeGrid./1e3,MBM_BRE_Norsv)
+legend('FAST','BRE','BRE w/o Reserves')
+grid on
+xlabel('Range [km]')
+ylabel('M_{Batt} / M_{Total}')
+
+subplot(1,2,2)
+plot(RangeGrid./1e3,(MBM_BRE - MBM_FAST)./MBM_FAST.*100)
+hold on
+plot(RangeGrid./1e3,(MBM_BRE_Norsv - MBM_FAST)./MBM_FAST.*100)
+legend('With Reserve Mission','Without Reserve Mission')
+xlabel('Range [km]')
+ylabel('BRE Error [%]')
+grid on
 
 %% 3.B) BRE Comparison A320 Battery
 clear; clc; close all;
