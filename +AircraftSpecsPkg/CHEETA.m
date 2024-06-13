@@ -58,7 +58,7 @@ Aircraft.Specs.Performance.Alts.Crs = UnitConversionPkg.ConvLength(37000,'ft','m
 Aircraft.Specs.Performance.Range = UnitConversionPkg.ConvLength(2935,'naut mi','m');
 
 % maximum rate of climb (m/s), assumed 2,250 ft/min
-Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(1000/60,'ft','m');
+Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(500/60,'ft','m');
 
 
 %% AERODYNAMICS %%
@@ -71,7 +71,7 @@ Aircraft.Specs.Aero.L_D.Clb = 16;
 % lift-drag ratio during cruise 
 % this changes during the flight as the heat exchanger adds additional drag
 % according to elias's model
-Aircraft.Specs.Aero.L_D.Crs = 18;
+Aircraft.Specs.Aero.L_D.Crs = 16;
 
 % assume same lift-drag ratio during climb and descent
 Aircraft.Specs.Aero.L_D.Des = Aircraft.Specs.Aero.L_D.Clb;
@@ -98,11 +98,7 @@ Aircraft.Specs.Weight.Fuel = 19000;
 % battery weight (kg), leave NaN for propulsion systems without batteries
 Aircraft.Specs.Weight.Batt = NaN;
 
-% Airframe weight calibration factor
-Aircraft.Specs.Weight.WairfCF = 1.03;
 
-% Gravimetric efficiency of h2 tank
-Aircraft.Specs.Weight.EtaTank = 0.65;
 
 %% PROPULSION %%
 %%%%%%%%%%%%%%%%
@@ -155,7 +151,7 @@ Aircraft.Specs.Propulsion.Oper.PSES = @() Aircraft.Specs.Propulsion.PropArch.PSE
 
 % thrust-power  source efficiency
 % NOTICE that the efficiency between fans and thrust production is 90%
-Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.675, 1, 1, 1; 1, 0.675, 1, 1];
+Aircraft.Specs.Propulsion.Eta.TSPS  =  [0.77, 1, 1, 1; 1, 0.77, 1, 1];
 
 % power -power  source efficiency
 Aircraft.Specs.Propulsion.Eta.PSPS  = ones(4);
@@ -178,7 +174,7 @@ Aircraft.Specs.Propulsion.Engine = NaN;
 Aircraft.Specs.Propulsion.NumEngines = 0;
 
 % thrust-weight ratio (if a turbojet/turbofan)
-Aircraft.Specs.Propulsion.T_W.SLS = 0.056;%0.1352;
+Aircraft.Specs.Propulsion.T_W.SLS = 0.32; %0.056;%
 
 % total sea-level static thrust available (N)
 Aircraft.Specs.Propulsion.Thrust.SLS = NaN;
@@ -190,11 +186,18 @@ Aircraft.Specs.Propulsion.Eta.Prop = NaN;
 Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
 
 % Calibration factor on fuel cell hydrogen consumption
-Aircraft.Specs.Propulsion.MDotCF = 1.22;
+Aircraft.Specs.Propulsion.MDotCF = 1.33;
 
 % oversize factor on power at the design point for the fuel cell system
-Aircraft.Specs.Propulsion.FC_Oversize = 1.2;
+Aircraft.Specs.Propulsion.FC_Oversize = 0.88; % uiuc tells me this should be 1.15
 
+Aircraft.Specs.Aero.L_D.CF = 1.05;
+
+% Airframe weight calibration factor
+Aircraft.Specs.Weight.WairfCF = 1.06;
+
+% Gravimetric efficiency of h2 tank
+Aircraft.Specs.Weight.EtaTank = 0.65;
 
 %% POWER %%
 %%%%%%%%%%%
@@ -214,7 +217,7 @@ Aircraft.Specs.Power.P_W.SLS = NaN;
 
 % power-weight ratio for the electric motor and generator (kW/kg)
 % leave as NaN if an electric motor or generator isn't in the powertrain
-Aircraft.Specs.Power.P_W.EM = 20;
+Aircraft.Specs.Power.P_W.EM = 28;
 Aircraft.Specs.Power.P_W.EG = NaN;
 
 % thrust splits (thrust / total thrust)

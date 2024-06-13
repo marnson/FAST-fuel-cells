@@ -134,7 +134,7 @@ if      (strcmpi(aclass, "Turbofan" ) == 1)
 T0 = 9.81*Aircraft.Specs.Propulsion.T_W.SLS*Aircraft.Specs.Weight.MTOW;
     
     % get the total power (de-rate to account for not being static)
-    P0 = 0.95 * T0 * 225;
+    P0 = 0.95 * T0 * Aircraft.Specs.Performance.Vels.Tko;
     
 elseif ((strcmpi(aclass, "Turboprop") == 1) || ...
         (strcmpi(aclass, "Piston"   ) == 1)  )
@@ -170,6 +170,8 @@ SplitPSPS = PropulsionPkg.EvalSplit(FunSplitPSPS, LamPSPS);
 
 % split the power amongst the power sources
 Power = PropulsionPkg.SplitPower(Aircraft, P0, SplitTS, SplitTSPS, SplitPSPS);
+
+
 
 % convert power to thrust
 Thrust = Power ./ TkoVel;
@@ -241,7 +243,9 @@ if (any(PSType == 2))
     % loop through the engines
     for ifc = 1:length(HasFC)
         % size fuel cell (on design) with design point and max power
-        Wfc(ifc) = FuelCellPkg.OnDesignFC(Aircraft,Power(HasFC(ifc)),1e4,0.78);
+%        Wfc(ifc) = FuelCellPkg.OnDesignFC(Aircraft,Power(HasFC(ifc)),1e4,0.78);
+       Wfc(ifc) = FuelCellPkg.OnDesignFC(Aircraft,Power(HasFC(ifc)),0,0.25);
+
 % Wfc(ifc) = FuelCellPkg.OnDesignFC(Aircraft,15806525.62/2,1e4,0.78);
           
     end

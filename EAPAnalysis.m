@@ -333,39 +333,41 @@ while (iter < MaxIter)
 
     %% Update L/D %%
     
-    if any(Aircraft.Specs.Propulsion.PropArch.PSType == 2)
-    % get powers only at high altitude (main) cruise segments
-    Segs = Aircraft.Mission.History.Segment;
-    Alts = Aircraft.Mission.History.SI.Performance.Alt;
-    Ptemp = Aircraft.Mission.History.SI.Power.Preq_PS(:,3) + Aircraft.Mission.History.SI.Power.Preq_PS(:,4);
-    Ptemp(Segs ~= "Cruise") = [];
-    Alts(Segs ~= "Cruise") = [];
-    Ptemp(Alts < 5e3) = [];
-    CruisePower = mean(Ptemp);
-
-
-    % Get Mach and Alt for cruise
-    CruiseMach = Aircraft.Specs.Performance.Vels.Crs;
-    CruiseAlt = Aircraft.Specs.Performance.Alts.Crs;
-
-    % Set Heat Ex Specs (move this to user side later)
-    Aircraft.Specs.Propulsion.FuelCell.HEX.ar = 8.5986   * 0.65;
-    Aircraft.Specs.Propulsion.FuelCell.prop.num = 2;
-    Aircraft.Specs.Propulsion.FuelCell.HEX.length_ratio = 5;
-    
-    % Run off design to predict rejected heat
-    [~,RejectedHeat] = FuelCellPkg.OffDesignFC(Aircraft,CruisePower,CruiseAlt,CruiseMach);
-
-    % use rejected heat to predice Extra drag
-    [ExtraDrag] = FuelCellPkg.IsolatedHEXdrag(Aircraft.Specs.Propulsion.FuelCell,CruiseMach,CruiseAlt,RejectedHeat);
-    
-    if iter == 0
-    L_D = Aircraft.Specs.Aero.L_D.Crs;
-    end
-    NewL_D = 1/(1/(L_D) + ExtraDrag/(Aircraft.Specs.Weight.MTOW*0.95*9.81));
-    Aircraft.Specs.Aero.L_D.Crs = NewL_D;
-    Aircraft.Specs.Aero.L_D.Crs = NewL_D*16/18;
-    end
+%     if any(Aircraft.Specs.Propulsion.PropArch.PSType == 2)
+%     % get powers only at high altitude (main) cruise segments
+%     Segs = Aircraft.Mission.History.Segment;
+%     Alts = Aircraft.Mission.History.SI.Performance.Alt;
+%     Ptemp = Aircraft.Mission.History.SI.Power.Preq_PS(:,3) + Aircraft.Mission.History.SI.Power.Preq_PS(:,4);
+%     Ptemp(Segs ~= "Cruise") = [];
+%     Alts(Segs ~= "Cruise") = [];
+%     Ptemp(Alts < 5e3) = [];
+%     CruisePower = mean(Ptemp);
+% 
+% 
+%     % Get Mach and Alt for cruise
+%     CruiseMach = Aircraft.Specs.Performance.Vels.Crs;
+%     CruiseAlt = Aircraft.Specs.Performance.Alts.Crs;
+% 
+%     % Set Heat Ex Specs (move this to user side later)
+%     Aircraft.Specs.Propulsion.FuelCell.HEX.ar = 8.5986   * 0.65;
+%     Aircraft.Specs.Propulsion.FuelCell.prop.num = 2;
+%     Aircraft.Specs.Propulsion.FuelCell.HEX.length_ratio = 5;
+%     
+%     % Run off design to predict rejected heat
+%     [~,RejectedHeat] = FuelCellPkg.OffDesignFC(Aircraft,CruisePower,CruiseAlt,CruiseMach);
+% 
+%     % use rejected heat to predice Extra drag
+%     [ExtraDrag] = FuelCellPkg.IsolatedHEXdrag(Aircraft.Specs.Propulsion.FuelCell,CruiseMach,CruiseAlt,RejectedHeat);
+%     
+%     if iter == 0
+%     L_D = Aircraft.Specs.Aero.L_D.Crs;
+%     end
+%     NewL_D = 1/(1/(L_D) + ExtraDrag/(Aircraft.Specs.Weight.MTOW*0.95*9.81));
+%     NewL_D = NewL_D*Aircraft.Specs.Aero.L_D.CF;
+%     Aircraft.Specs.Aero.L_D.Crs = NewL_D;
+%     Aircraft.Specs.Aero.L_D.Crs = NewL_D*16/18;
+%     NewL_D
+%     end
 
 
 %%

@@ -61,7 +61,7 @@ W = CH.Specs.Weight;
 
 FAST_Model = [W.EM, W.FuelCells, W.Tank, W.Fuel, W.OEW + W.FuelCells ,W.MTOW];
 
-ErrorPercent = (FAST_Model - CHEETA)./CHEETA.*100
+ErrorPercent = (FAST_Model - CHEETA)./CHEETA.*100;
 
 Weight = ["Motors","FC","Tanks","Fuel","OEW","MTOW"]';
 
@@ -69,6 +69,8 @@ ErrorTab = table(Weight, CHEETA', FAST_Model', ErrorPercent');
 ErrorTab.Properties.VariableNames(2) = "CHEETA";
 ErrorTab.Properties.VariableNames(3) = "FAST Model";
 ErrorTab.Properties.VariableNames(4) = "Error (%)";
+
+
 ErrorTab
 
 
