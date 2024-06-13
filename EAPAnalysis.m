@@ -2,7 +2,7 @@ function [Aircraft] = EAPAnalysis(Aircraft, Type, MaxIter)
 %
 % [Aircraft] = EAPAnalysis(Aircraft, Type, MaxIter)
 % written by Paul Mokotoff, prmoko@umich.edu
-% last updated: 24 apr 2024
+% last updated: 05 jun 2024
 %
 % For a given aircraft, either:
 %
@@ -58,9 +58,6 @@ end
 % structure                  %
 %                            %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% battery specific energy
-ebatt = Aircraft.Specs.Power.SpecEnergy.Batt;
 
 % check for fuel and batteries
 Fuel = Aircraft.Specs.Propulsion.PropArch.ESType == 1;
@@ -231,19 +228,7 @@ while (iter < MaxIter)
     
     % compute the fuel burn weight changes
     dWfuel = Fburn - Wfuel;
-    
-    % get cumulative battery energy (if any)
-    if (any(Batt))
-        % get the battery energy
-        Ebatt = Aircraft.Mission.History.SI.Energy.E_ES(end, Batt);
         
-    else
-        
-        % no battery energy
-        Ebatt = 0;
-        
-    end
-    
     % check if a retrofit is being performed (fixed battery weight)
     if (Type == -2)
         
@@ -252,21 +237,12 @@ while (iter < MaxIter)
         
     else
         
-        % check for a detailed battery model
-        if (Aircraft.Settings.DetailedBatt == 1)
-            
-            % resize the battery for power and energy
-            Aircraft = BatteryPkg.ResizeBattery(Aircraft);
-            
-            % find the difference between the new and old battery weight
-            dWbatt = Aircraft.Specs.Weight.Batt - Wbatt;
-            
-        else
+        % resize the battery for power and energy
+        Aircraft = BatteryPkg.ResizeBattery(Aircraft);
         
-            % size the battery based on energy demand only
-            dWbatt = Ebatt ./ ebatt - Wbatt;
+        % find the difference between the new and old battery weight
+        dWbatt = Aircraft.Specs.Weight.Batt - Wbatt;
             
-        end        
     end
     
     % update mtow
@@ -292,7 +268,6 @@ while (iter < MaxIter)
     Wbatt = Wbatt + dWbatt;
     Wpax  = Aircraft.Specs.Weight.Payload;
     Wcrew = Aircraft.Specs.Weight.Crew;
-    Wfuelcell = Aircraft.Specs.Weight.FuelCells;
     
     % remember the new weights
     Aircraft.Specs.Weight.MTOW = mtow_new;
@@ -301,7 +276,7 @@ while (iter < MaxIter)
 
     % compute the OEW when sizing
     if (Type > -2)
-        Aircraft.Specs.Weight.OEW  = mtow_new - sum(Wfuel) - sum(Wbatt) - Wpax - Wcrew - sum(Wfuelcell);
+        Aircraft.Specs.Weight.OEW  = mtow_new - sum(Wfuel) - sum(Wbatt) - Wpax - Wcrew;
     end
     
     % remember the OEW and wing area
@@ -320,57 +295,8 @@ while (iter < MaxIter)
     fprintf(1, "    Wfuel = %.6e lbm   \n", UnitConversionPkg.ConvMass(Wfuel   , "kg", "lbm")    );
     fprintf(1, "    Wem   = %.6e lbm   \n", UnitConversionPkg.ConvMass(Wem     , "kg", "lbm")    );
     fprintf(1, "    Weg   = %.6e lbm   \n", UnitConversionPkg.ConvMass(Weg     , "kg", "lbm")    );
-    fprintf(1, "    Wfc   = %.6e lbm   \n", UnitConversionPkg.ConvMass(Wfuelcell, "kg", "lbm")    );
     fprintf(1, "    S     = %.6e ft^2\n\n", S * UnitConversionPkg.ConvLength(1 , "m" , "ft" ) ^ 2);
     
-
-
-    % Update Point performance 
-    
-%     [~,MP_Index] = max(Aircraft.Mission.History.SI.Power.Req(Aircraft.Settings.TkoPoints:end));
-%     MaxThrust = sum(Aircraft.Mission.History.SI.Power.Treq_TS(MP_Index+Aircraft.Settings.TkoPoints,:));
-%     Aircraft.Specs.Propulsion.T_W.SLS = MaxThrust/Aircraft.Specs.Weight.MTOW;
-
-    %% Update L/D %%
-    
-%     if any(Aircraft.Specs.Propulsion.PropArch.PSType == 2)
-%     % get powers only at high altitude (main) cruise segments
-%     Segs = Aircraft.Mission.History.Segment;
-%     Alts = Aircraft.Mission.History.SI.Performance.Alt;
-%     Ptemp = Aircraft.Mission.History.SI.Power.Preq_PS(:,3) + Aircraft.Mission.History.SI.Power.Preq_PS(:,4);
-%     Ptemp(Segs ~= "Cruise") = [];
-%     Alts(Segs ~= "Cruise") = [];
-%     Ptemp(Alts < 5e3) = [];
-%     CruisePower = mean(Ptemp);
-% 
-% 
-%     % Get Mach and Alt for cruise
-%     CruiseMach = Aircraft.Specs.Performance.Vels.Crs;
-%     CruiseAlt = Aircraft.Specs.Performance.Alts.Crs;
-% 
-%     % Set Heat Ex Specs (move this to user side later)
-%     Aircraft.Specs.Propulsion.FuelCell.HEX.ar = 8.5986   * 0.65;
-%     Aircraft.Specs.Propulsion.FuelCell.prop.num = 2;
-%     Aircraft.Specs.Propulsion.FuelCell.HEX.length_ratio = 5;
-%     
-%     % Run off design to predict rejected heat
-%     [~,RejectedHeat] = FuelCellPkg.OffDesignFC(Aircraft,CruisePower,CruiseAlt,CruiseMach);
-% 
-%     % use rejected heat to predice Extra drag
-%     [ExtraDrag] = FuelCellPkg.IsolatedHEXdrag(Aircraft.Specs.Propulsion.FuelCell,CruiseMach,CruiseAlt,RejectedHeat);
-%     
-%     if iter == 0
-%     L_D = Aircraft.Specs.Aero.L_D.Crs;
-%     end
-%     NewL_D = 1/(1/(L_D) + ExtraDrag/(Aircraft.Specs.Weight.MTOW*0.95*9.81));
-%     NewL_D = NewL_D*Aircraft.Specs.Aero.L_D.CF;
-%     Aircraft.Specs.Aero.L_D.Crs = NewL_D;
-%     Aircraft.Specs.Aero.L_D.Crs = NewL_D*16/18;
-%     NewL_D
-%     end
-
-
-%%
     % iterate
     iter = iter + 1;
     
