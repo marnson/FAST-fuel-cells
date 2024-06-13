@@ -1,9 +1,9 @@
-function [Voltage, Pout, Capacity, SOC] = Model(Preq, Time, SOCBeg, Parallel, Series)
+function [Voltage, Current, Pout, Capacity, SOC] = Model(Preq, Time, SOCBeg, Parallel, Series)
 %
 % [Voltage, Pout, Capacity, SOC] = Model(Preq, Time, SOCBeg, Parallel, Series)
 % written by Sasha Kryuchkov
 % modified by Paul Mokotoff, prmoko@umich.edu
-% last updated: 07 mar 2024
+% last updated: 13 jun 2024
 %
 % Model (dis)charging for a Lithium-ion battery.
 %
@@ -126,6 +126,7 @@ K = (-E_nom + E0 + A * exp(-B * Q_nom) * (Q - Q_nom)) ./ ...
 % Pre-allocate the output vectors depending on the vector length
 Voltage = zeros(ntime,1);
 SOC = zeros(ntime,1);
+Current = zeros(ntime,1);
 Capacity = zeros(ntime,1);
 Pout = zeros(ntime,1);
 
@@ -135,7 +136,7 @@ Q_act_i = Q - SOCBeg / 100 * Q;
 % calculate the initial discharge voltage
 VInit = E0 - R * current(1) - ...
                   K(1) .* Q ./ (Q - Q_act_i) * current(1) - ...
-                  K(1) .* Q ./ (Q - Q_act_i) + ...
+                  K(1) .* Q ./ (Q - Q_act_i) * current(1) + ...
                   A .* exp(-B .* Q_act_i);
 
 % get a cumulative sum of the charge consumed
@@ -150,7 +151,7 @@ for frame = 1:ntime
         % calculate the final discharge voltage
         Voltage(frame) = E0 - R * current(frame) - ...
         K(frame) .* Q ./ (Q - Q_consumed(frame)) * current(frame) - ...
-        K(frame) .* Q ./ (Q - Q_consumed(frame)) + ...
+        K(frame) .* Q ./ (Q - Q_consumed(frame)) * current(frame) + ...
         A .* exp(-B .* Q_consumed(frame));
         
         % calculate the final SOC
@@ -170,7 +171,7 @@ for frame = 1:ntime
         % calculate the final voltage with the new current
         Voltage(frame) = E0 - R * current_final - ...
         K(frame) .* Q ./ (Q - Q_consumed(frame)) * current_final - ...
-        K(frame) .* Q ./ (Q - Q_consumed(frame)) + ...
+        K(frame) .* Q ./ (Q - Q_consumed(frame)) * current_final + ...
         A .* exp(-B .* Q_consumed(frame));
         
         % calculate the required power using the new final voltage and
@@ -237,7 +238,7 @@ for frame = 1:ntime
         
     end
 end
-
+Current = current;
 % ----------------------------------------------------------
 
 end
