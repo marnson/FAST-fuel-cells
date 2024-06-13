@@ -251,22 +251,13 @@ while (iter < MaxIter)
         dWbatt = 0;
         
     else
-        
-        % check for a detailed battery model
-        if (Aircraft.Settings.DetailedBatt == 1)
             
             % resize the battery for power and energy
             Aircraft = BatteryPkg.ResizeBattery(Aircraft);
             
             % find the difference between the new and old battery weight
             dWbatt = Aircraft.Specs.Weight.Batt - Wbatt;
-            
-        else
-        
-            % size the battery based on energy demand only
-            dWbatt = Ebatt ./ ebatt - Wbatt;
-            
-        end        
+
     end
     
     % update mtow

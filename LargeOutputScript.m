@@ -79,8 +79,8 @@ clear; clc; close all;
 
 Specs = AircraftSpecsPkg.AEA;
 
-%AE = Main(Specs,@MissionProfilesPkg.AEAProfile);
-AE = Main(Specs,@MissionProfilesPkg.NotionalMission03);
+AE = Main(Specs,@MissionProfilesPkg.AEAProfile);
+% AE = Main(Specs,@MissionProfilesPkg.NotionalMission03);
 
 W = AE.Specs.Weight;
 
@@ -315,4 +315,3 @@ fuelburn = Sized.Specs.Weight.Fuel;
 energy = Sized.Mission.History.SI.Energy.E_ES(end);
 
 end
-
