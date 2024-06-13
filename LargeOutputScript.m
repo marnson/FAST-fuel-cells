@@ -317,4 +317,3 @@ fuelburn = Sized.Specs.Weight.Fuel;
 energy = Sized.Mission.History.SI.Energy.E_ES(end);
 
 end
-
