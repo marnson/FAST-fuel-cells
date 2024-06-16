@@ -35,7 +35,7 @@ function [weight] = FC_File_Creator(fc,set)
                 Pgross = zeros(101,1);
                 for ii = 1:L_sweep
                     mdot_fuel = fuel_sweep(ii);
-                    [Pnet(ii),Eff_net(ii),Qdot(ii),Pcompressor(ii),mdot_air(ii),FC_eff(ii),Vcell(ii),Id(ii),Pgross(ii),Pstack] = FC_calc_v3(fc,altitude, mdot_fuel, mach);
+                    [Pnet(ii),Eff_net(ii),Qdot(ii),Pcompressor(ii),mdot_air(ii),FC_eff(ii),Vcell(ii),Id(ii),Pgross(ii),Pstack] = FuelCellPkg.FC_calc_v3(fc,altitude, mdot_fuel, mach);
 %                     Qdot(ii)
                     if Pgross(ii) < max(Pgross)
 %                         Pgross(ii) = max(Pgross)+0.01;
@@ -47,7 +47,7 @@ function [weight] = FC_File_Creator(fc,set)
                          Total_Drag(ii) = 0;
                     elseif set.HEXtype == 1
                     
-                    [Dcore,v3,v1] = HEXdrag_core(mach,altitude,fc.Ar,Qdot(ii));
+                    [Dcore,v3,v1] = FuelCellPkg.HEXdrag_core(mach,altitude,fc.Ar,Qdot(ii));
 %                     Dcore = interp3D_V003(FCmap_drag,1,power_lookingfor/fc.weight,mach,altitude,'n')
 %                     Dcore = 0;
                     
@@ -146,22 +146,22 @@ function [weight] = FC_File_Creator(fc,set)
 
     MP_h_rng = altitude_rng';
 
-    save('aswhitefc_values.mat','MP_M_rng','MP_h_rng','LP_Wlb_mat','LP_Eff_mat','MP_Wlb_mat','MP_Eff_mat','MP_Drag_mat','LP_Drag_mat','LP_Heat_mat','MP_Heat_mat');
+    save('+FuelCellPkg/aswhitefc_values.mat','MP_M_rng','MP_h_rng','LP_Wlb_mat','LP_Eff_mat','MP_Wlb_mat','MP_Eff_mat','MP_Drag_mat','LP_Drag_mat','LP_Heat_mat','MP_Heat_mat');
 
 
-    fid = fopen('afc_eff.dat','wt');
+    fid = fopen('+FuelCellPkg/afc_eff.dat','wt');
     fprintf(fid, 'VARIABLES = "powerdemand", "mach", "altitude", "efficiency", \n');
     fprintf(fid, 'ZONE T = "FCmapR2_Drag", I = 26, J = 4, K = 5 \n');
     fprintf(fid,'%f\t%f\t%i\t%f\t%f\t\n', (dataout));
     fclose(fid)
     
-    fid = fopen('afc_HEX.dat','wt');
+    fid = fopen('+FuelCellPkg/afc_HEX.dat','wt');
     fprintf(fid, 'VARIABLES = "powerdemand", "mach", "altitude", "drag", \n');
     fprintf(fid, 'ZONE T = "FCmapR2_Drag", I = 26, J = 4, K = 5 \n');
     fprintf(fid,'%f\t%f\t%i\t%f\t%f\t\n', (dataout_hex));
     fclose(fid)
     
-    fid = fopen('afc_HEAT.dat','wt');
+    fid = fopen('+FuelCellPkg/afc_HEAT.dat','wt');
     fprintf(fid, 'VARIABLES = "powerdemand", "mach", "altitude", "heat", \n');
     fprintf(fid, 'ZONE T = "FCmapR2_Drag", I = 26, J = 4, K = 5 \n');
     fprintf(fid,'%f\t%f\t%i\t%f\t%f\t\n', (dataout_heat));

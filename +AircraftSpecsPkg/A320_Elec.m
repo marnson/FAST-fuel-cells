@@ -267,7 +267,7 @@ Aircraft.Settings.OEW.MaxIter = 50;
 Aircraft.Settings.OEW.Tol = 0.001;
 
 % maximum number of iterations during aircraft sizing
-Aircraft.Settings.Analysis.MaxIter = 50;
+Aircraft.Settings.Analysis.MaxIter = 30;
 
 % analysis type, either:
 %     +1 for on -design mode (aircraft performance and sizing)

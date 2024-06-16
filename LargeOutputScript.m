@@ -34,7 +34,19 @@ ATR.Specs.Performance.Range = UnitConversionPkg.ConvLength(400,'naut mi','m');
 tempac = Main(ATR,@MissionProfilesPkg.NotionalMission00);
 FAST_Model = [FAST_Model, tempac.Specs.Weight.Fuel];
 
-err = (FAST_Model - actuals)./actuals.*100
+err = (FAST_Model - actuals)./actuals.*100;
+
+Weight = ["MTOW","OEW","200 nmi","300 nmi","400 nmi"]';
+
+ErrorTab = table(Weight, actuals', FAST_Model', err');
+ErrorTab.Properties.VariableNames(2) = "Literature";
+ErrorTab.Properties.VariableNames(3) = "FAST Model";
+ErrorTab.Properties.VariableNames(4) = "Error (%)";
+
+
+save('EPP_Results/ATR_Tuning.mat','ErrorTab')
+
+
 
 %% 1.B) A320 Conventional Tuning
 
@@ -47,23 +59,42 @@ actuals = [79000,19051,42600, 2990*2];
 W = A320.Specs.Weight;
 FAST_Model = [W.MTOW, W.Fuel, W.OEW, W.Engines];
 
-err = (FAST_Model - actuals)./actuals.*100
+err = (FAST_Model - actuals)./actuals.*100;
 
 
-%% 1.C) CHEETA Fuel Cell Baseline
+Weight = ["MTOW","Fuel","OEW","Engines"]';
+
+ErrorTab = table(Weight, actuals', FAST_Model', err');
+ErrorTab.Properties.VariableNames(2) = "Literature";
+ErrorTab.Properties.VariableNames(3) = "FAST Model";
+ErrorTab.Properties.VariableNames(4) = "Error (%)";
+
+
+save('EPP_Results/A320_Tuning.mat','ErrorTab')
+
+%% 1.C) B1900 Conventional Tuning
+
+
+
+
+
+
+
+
+%% 1.D) CHEETA Fuel Cell Baseline
 
 clear; clc; close all;
-CHEETA = UnitConversionPkg.ConvMass([1847.522594,15715.22337,10241.60151,15756.31001,129852.40 ,180608.7079],'lbm','kg');
+CHEETA = UnitConversionPkg.ConvMass([1847.522594,15715.22337,10241.60151,15756.31001,129852.40 ,180608.7079, 129852.40 - 15715.22337],'lbm','kg');
 
 
 CH = Main(AircraftSpecsPkg.CHEETA,@MissionProfilesPkg.NotionalMission02);
 W = CH.Specs.Weight;
 
-FAST_Model = [W.EM, W.FuelCells, W.Tank, W.Fuel, W.OEW + W.FuelCells ,W.MTOW];
+FAST_Model = [W.EM, W.FuelCells, W.Tank, W.Fuel, W.MTOW - W.Payload - W.Fuel ,W.MTOW,W.Airframe];
 
 ErrorPercent = (FAST_Model - CHEETA)./CHEETA.*100;
 
-Weight = ["Motors","FC","Tanks","Fuel","OEW","MTOW"]';
+Weight = ["Motors","FC","Tanks","Fuel","OEW","MTOW","Airframe"]';
 
 ErrorTab = table(Weight, CHEETA', FAST_Model', ErrorPercent');
 ErrorTab.Properties.VariableNames(2) = "CHEETA";
@@ -76,12 +107,12 @@ ErrorTab
 
 
 
-%% 1.D) AEA Full Electric Baseline
+%% 1.E) AEA Full Electric Baseline
 clear; clc; close all;
 
 Specs = AircraftSpecsPkg.AEA;
 
-%AE = Main(Specs,@MissionProfilesPkg.AEAProfile);
+% AE = Main(Specs,@MissionProfilesPkg.AEAProfile);
 AE = Main(Specs,@MissionProfilesPkg.NotionalMission03);
 
 W = AE.Specs.Weight;
@@ -93,16 +124,59 @@ EP = En/W.Payload/AE.Specs.Performance.Range/9.81;
 En = En/3.6e9;
 
 trueparam = [109.5e3,36e3,28.8,0.649];
-FAST_Model =[W.MTOW,W.Batt, En,EP]
+FAST_Model =[W.MTOW,W.Batt, En,EP];
 err = (FAST_Model - trueparam)./trueparam.*100;
 
-err(1:2)
+
+
+Params = ["MTOW","Battery Weight","Total Energy","Normalized Energy"]';
+
+ErrorTab = table(Params, trueparam', FAST_Model', err');
+ErrorTab.Properties.VariableNames(2) = "AEA";
+ErrorTab.Properties.VariableNames(3) = "FAST Model";
+ErrorTab.Properties.VariableNames(4) = "Error (%)";
+
+
+ErrorTab
+
 
 
 
 %% 2.A) Running Trade study for the A320 fuel cell
 clear; clc; close all;
 
+% load specifications
+ACSpecs = AircraftSpecsPkg.A320_FuelCell;
+ACSpecs.Settings.Plotting = 0;
+
+
+% create grids
+% FC is power to weight and eta tank
+% Electric is propulsive efficiency and ebatt
+N = 3;
+
+PW = 363*2.2/1.142.*linspace(0.7,1.5,N);
+EtaTank = linspace(0.65,1.5,N);
+
+[PWGrid,EtaGrid] = meshgrid(PW,EtaTank);
+
+% Inside the loop
+
+for ii = 1:N
+    for jj = 1:N
+        ACSpecs.Specs.Propulsion.FuelCell.weight = PWGrid(ii,jj);
+        ACSpecs.Specs.Weight.EtaTank = EtaGrid(ii,jj);
+        FuelCellPkg.FC_init(ACSpecs.Specs.Propulsion.FuelCell)
+        SizedAC(ii,jj) = Main(ACSpecs,@MissionProfilesPkg.A320);
+        EnergyGrid(ii,jj) = SizedAC(ii,jj).Mission.History.SI.Energy.E_ES(end);
+    end
+end
+
+
+close all
+contourf(PWGrid,EtaGrid,EnergyGrid)
+
+save('EPP_Results/A320_FuelCell_Trade.mat','PWGrid','EtaGrid','EnergyGrid','SizedAC')
 
 
 
@@ -110,6 +184,33 @@ clear; clc; close all;
 clear; clc; close all;
 
 
+% create grids
+% FC is power to weight and eta tank
+% Electric is propulsive efficiency and ebatt
+N = 3;
+
+ebatt = linspace(2,5,N);
+etaprop = linspace(0.5,0.8,N);
+
+[eBattGrid,EtaGrid] = meshgrid(ebatt,etaprop);
+
+% Inside the loop
+
+for ii = 1:N
+    for jj = 1:N
+        ACSpecs = AircraftSpecsPkg.A320_Elec(EtaGrid(ii,jj));
+        ACSpecs.Settings.Plotting = 0;
+        ACSpecs.Specs.Power.SpecEnergy.Batt = eBattGrid(ii,jj);
+        SizedAC(ii,jj) = Main(ACSpecs,@MissionProfilesPkg.A320);
+        EnergyGrid(ii,jj) = SizedAC(ii,jj).Mission.History.SI.Energy.E_ES(end);
+    end
+end
+
+
+close all
+contourf(eBattGrid,EtaGrid,EnergyGrid)
+
+save('EPP_Results/A320_Elec_Trade.mat','eBattGrid','EtaGrid','EnergyGrid','SizedAC')
 
 
 
@@ -120,6 +221,13 @@ clear; clc; close all;
 
 %% 2.D) Running Trady Study for ATR Battery
 clear; clc; close all;
+
+%% 2.E) Running Trade study for the B1900 fuel cell
+clear; clc; close all;
+
+%% 2.F) Running Trady Study for B1900 Battery
+clear; clc; close all;
+
 
 %% 3.A) BRE Comparison A320 Fuel Cell
 clear; clc; close all;
@@ -145,12 +253,12 @@ MBM_BRE_Norsv  = zeros(1,N);
 for ii = 1:N
     R = RangeGrid(ii);
     Specs.Specs.Performance.Range = R;
-    Sized = Main(Specs,Mission);
-    MBM_FAST(ii) = Sized.Specs.Weight.Fuel/Sized.Specs.Weight.MTOW;
+    Sized(ii) = Main(Specs,Mission);
+    MBM_FAST(ii) = Sized(ii).Specs.Weight.Fuel/Sized(ii).Specs.Weight.MTOW;
     
-    MBM_BRE_Norsv(ii) = exp(R/eFuel*9.81/EtaProp/LD);
+    MBM_BRE_Norsv(ii) = 1 - exp(-R/eFuel*9.81/EtaProp/LD);
     R = R + UnitConversionPkg.ConvLength(200,'naut mi', 'm') + 30*60*150;
-    MBM_BRE(ii) = exp(R/eFuel*9.81/EtaProp/LD);
+    MBM_BRE(ii) = 1 - exp(-R/eFuel*9.81/EtaProp/LD);
    
 end
 
@@ -165,7 +273,7 @@ plot(RangeGrid./1e3,MBM_BRE_Norsv)
 legend('FAST','BRE','BRE w/o Reserves')
 grid on
 xlabel('Range [km]')
-ylabel('M_{Batt} / M_{Total}')
+ylabel('M_{LH_2} / M_{Total}')
 
 subplot(1,2,2)
 plot(RangeGrid./1e3,(MBM_BRE - MBM_FAST)./MBM_FAST.*100)
@@ -175,6 +283,10 @@ legend('With Reserve Mission','Without Reserve Mission')
 xlabel('Range [km]')
 ylabel('BRE Error [%]')
 grid on
+
+
+save('EPP_Results/BRE_A320_FuelCell.mat','Sized','RangeGrid','MBM_BRE','MBM_BRE_Norsv','MBM_FAST')
+
 
 %% 3.B) BRE Comparison A320 Battery
 clear; clc; close all;
@@ -200,8 +312,8 @@ MBM_BRE_Norsv  = zeros(1,N);
 for ii = 1:N
     R = RangeGrid(ii);
     Specs.Specs.Performance.Range = R;
-    Sized = Main(Specs,Mission);
-    MBM_FAST(ii) = Sized.Specs.Weight.Batt/Sized.Specs.Weight.MTOW;
+    Sized(ii) = Main(Specs,Mission);
+    MBM_FAST(ii) = Sized(ii).Specs.Weight.Batt/Sized(ii).Specs.Weight.MTOW;
     
     MBM_BRE_Norsv(ii) = R/eBatt*9.81/EtaProp/LD;
     R = R + UnitConversionPkg.ConvLength(200,'naut mi', 'm') + 30*60*150;
@@ -231,6 +343,7 @@ xlabel('Range [km]')
 ylabel('BRE Error [%]')
 grid on
 
+save('EPP_Results/BRE_A320_Elec.mat','Sized','RangeGrid','MBM_BRE','MBM_BRE_Norsv','MBM_FAST')
 
 %Main(Specs,Mission)
 

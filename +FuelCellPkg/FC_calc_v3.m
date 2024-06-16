@@ -18,15 +18,15 @@ c0 = fc.c0;
 c1 = fc.c1;
 
 % Air pressure calc
-P0 = airpressure(0);
-P_ambient = airpressure(altitude);
+P0 = FuelCellPkg.airpressure(0);
+P_ambient = FuelCellPkg.airpressure(altitude);
 P_bar = P_ambient/P0;
 
 %isentropic stagnation due to air speed
 isen_P = (1+(gamma-1)/2*M^2)^(gamma/(gamma-1))*P_bar;
 
 % [T, ~, ~, ~] = atmosisa(altitude/3.3);
-T = air_temp(altitude);
+T = FuelCellPkg.air_temp(altitude);
 % cO2 = cO2/P_bar^2;
 
 Tt_inf =  T*(1+(gamma-1)/2*M^2);

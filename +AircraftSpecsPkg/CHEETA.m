@@ -186,15 +186,14 @@ Aircraft.Specs.Propulsion.Eta.Prop = NaN;
 Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
 
 % Calibration factor on fuel cell hydrogen consumption
-Aircraft.Specs.Propulsion.MDotCF = 1.33;
+Aircraft.Specs.Propulsion.MDotCF = 1.36;
 
 % oversize factor on power at the design point for the fuel cell system
 Aircraft.Specs.Propulsion.FC_Oversize = 0.88; % uiuc tells me this should be 1.15
 
-Aircraft.Specs.Aero.L_D.CF = 1.05;
 
 % Airframe weight calibration factor
-Aircraft.Specs.Weight.WairfCF = 1.06;
+Aircraft.Specs.Weight.WairfCF = 1.05;
 
 % Gravimetric efficiency of h2 tank
 Aircraft.Specs.Weight.EtaTank = 0.65;
@@ -217,7 +216,7 @@ Aircraft.Specs.Power.P_W.SLS = NaN;
 
 % power-weight ratio for the electric motor and generator (kW/kg)
 % leave as NaN if an electric motor or generator isn't in the powertrain
-Aircraft.Specs.Power.P_W.EM = 28;
+Aircraft.Specs.Power.P_W.EM = 26;
 Aircraft.Specs.Power.P_W.EG = NaN;
 
 % thrust splits (thrust / total thrust)

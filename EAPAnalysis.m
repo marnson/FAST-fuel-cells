@@ -111,6 +111,10 @@ if (isnan(Wbatt))
     Wbatt = zeros(1, max(1, sum(Batt)));
 end
 
+if (isempty(Wbatt))
+    Wbatt = zeros(1, max(1, sum(Batt)));
+end
+
 % throw an error if wing loading isn't a number
 if (isnan(W_S))
     error("ERROR - EAPAnalysis: Wing loading is NaN");
@@ -173,7 +177,7 @@ if Type < 0
         Aircraft.Specs.Weight.Crew   +...
         Aircraft.Specs.Weight.Payload   +...
         Aircraft.Specs.Weight.Fuel   +...
-        Aircraft.Specs.Weight.Batt;
+        sum(Wbatt);%Aircraft.Specs.Weight.Batt;
 end
 
 % initialize the mission history
@@ -268,15 +272,17 @@ while (iter < MaxIter)
     Wbatt = Wbatt + dWbatt;
     Wpax  = Aircraft.Specs.Weight.Payload;
     Wcrew = Aircraft.Specs.Weight.Crew;
+    Wfc = Aircraft.Specs.Weight.FuelCells;
     
     % remember the new weights
     Aircraft.Specs.Weight.MTOW = mtow_new;
     Aircraft.Specs.Weight.Fuel = Wfuel;
     Aircraft.Specs.Weight.Batt = Wbatt;
 
+
     % compute the OEW when sizing
     if (Type > -2)
-        Aircraft.Specs.Weight.OEW  = mtow_new - sum(Wfuel) - sum(Wbatt) - Wpax - Wcrew;
+        Aircraft.Specs.Weight.OEW  = mtow_new - sum(Wfuel) - sum(Wbatt) - Wpax - Wcrew - Wfc;
     end
     
     % remember the OEW and wing area
