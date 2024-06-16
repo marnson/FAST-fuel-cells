@@ -41,6 +41,9 @@ W_S = Aircraft.Specs.Aero.W_S.SLS;
 % get the aircraft weights
 Wfuel = Aircraft.Specs.Weight.Fuel   ;
 Wbatt = Aircraft.Specs.Weight.Batt   ;
+if isempty(Wbatt)
+    Wbatt = 0;
+end
 Weg   = Aircraft.Specs.Weight.EG     ;
 Wem   = Aircraft.Specs.Weight.EM     ;
 Wpax  = Aircraft.Specs.Weight.Payload;
@@ -132,22 +135,41 @@ switch Class
 
             % modify MTOW
             MTOW = MTOW + WengNew - Weng + WemNew - Wem + WfcNew - Wfc;
-            
+
             % total energy
             TotalE = (Wfuel*Aircraft.Specs.Power.SpecEnergy.Fuel + Wbatt*Aircraft.Specs.Power.SpecEnergy.Batt);
-            % list the targets for the airframe weight estimation
-            target = [S, T, EIS, MTOW, TotalE];
 
-            % list parts of the aircraft structure to use in the regression
-            IO = {["Specs", "Aero"      , "S"            ], ...
-                ["Specs", "Propulsion", "Thrust", "SLS"], ...
-                ["Specs", "TLAR"      , "EIS"          ], ...
-                ["Specs", "Weight"    , "MTOW"         ], ...
-                ["Specs", "Power"    , "TotalEnergy"   ], ...
-                ["Specs", "Weight"    , "Airframe"     ]}   ;
 
-            % estimate the new airframe weight with a regression
-            WframeNew = RegressionPkg.NLGPR(TurbofanAC, IO, target, [1 1 0.2 1 1]);
+            if any(FC)
+
+                % list the targets for the airframe weight estimation
+                target = [S, T, EIS, MTOW, TotalE];
+
+                IO = {["Specs", "Aero"      , "S"            ], ...
+                    ["Specs", "Propulsion", "Thrust", "SLS"], ...
+                    ["Specs", "TLAR"      , "EIS"          ], ...
+                    ["Specs", "Weight"    , "MTOW"         ], ...
+                    ["Specs", "Power"    , "TotalEnergy"   ], ...
+                    ["Specs", "Weight"    , "Airframe"     ]}   ;
+
+                % estimate the new airframe weight with a regression
+                WframeNew = RegressionPkg.NLGPR(TurbofanAC, IO, target, [1 1 0.2 1 1]);
+            else
+
+                % list the targets for the airframe weight estimation
+                target = [S, T, EIS, MTOW];
+
+
+                % list parts of the aircraft structure to use in the regression
+                IO = {["Specs", "Aero"      , "S"            ], ...
+                    ["Specs", "Propulsion", "Thrust", "SLS"], ...
+                    ["Specs", "TLAR"      , "EIS"          ], ...
+                    ["Specs", "Weight"    , "MTOW"         ], ...
+                    ["Specs", "Weight"    , "Airframe"     ]}   ;
+
+                % estimate the new airframe weight with a regression
+                WframeNew = RegressionPkg.NLGPR(TurbofanAC, IO, target, [1 1 0.2 1]);
+            end
 
             if any(FC) % Modify Frame weight if fuel cells
                 Vtank = Wfuel*120e6/43e6/800*UnitConversionPkg.ConvLength(1,'m','ft')^3; % in feet
@@ -239,7 +261,7 @@ switch Class
                 WconvTank = 2.405*Vtank^0.606;
                 WH2Tank = Wfuel*Aircraft.Specs.Weight.EtaTank;
                 WframeNew = WframeNew - WconvTank + WH2Tank;
-                                Aircraft.Specs.Weight.Tank = WH2Tank;
+                Aircraft.Specs.Weight.Tank = WH2Tank;
             end
 
             % update the airframe weight with a calibration factor
@@ -283,6 +305,7 @@ Aircraft.Specs.Weight.EM       = WemNew   ;
 Aircraft.Specs.Weight.Airframe = WframeNew;
 Aircraft.Specs.Weight.OEW      = OEW      ;
 Aircraft.Specs.Weight.MTOW     = MTOW     ;
+Aircraft.Specs.Weight.FuelCells= WfcNew   ;
 
 % remember the new wing area
 Aircraft.Specs.Aero.S = S;
