@@ -34,7 +34,7 @@ Engine.OPR = 10.8;  % done
 % Architecture
 
 % Burner total temp (Kelvin)
-Engine.Tt4Max = 1110;   % kelvin % to be updated
+Engine.Tt4Max = 1070;   % kelvin % done
 
 % Required Power Output (Watts)
 Engine.ReqPower = 954e3; % kW to W % done
@@ -46,14 +46,14 @@ Engine.NPR = 1.3;
 Engine.NoSpools = 2; %done
 
 % Spool RPMs, highest pressure to lowest
-Engine.RPMs = [39000,1700];  % done
+Engine.RPMs = [39000,1700];  % To be checked (Specs showed that N1 is 39000 rpm (gas generator) and N2 is 1700 rpm (Power turbine module output))
 
 % Efficiencies
-Engine.EtaPoly.Inlet = 0.99; % to be updated
-Engine.EtaPoly.Diffusers = 0.99; % to be updated
-Engine.EtaPoly.Compressors = 0.88; % to be updated
-Engine.EtaPoly.Combustor = 0.995; % to be updated
-Engine.EtaPoly.Turbines = 0.88; % to be updated
-Engine.EtaPoly.Nozzles = 0.985; % to be updated
+Engine.EtaPoly.Inlet = 0.99; % done
+Engine.EtaPoly.Diffusers = 0.99; % done
+Engine.EtaPoly.Compressors = 0.85; % done
+Engine.EtaPoly.Combustor = 0.93; % done
+Engine.EtaPoly.Turbines = 0.85; % done
+Engine.EtaPoly.Nozzles = 0.985; % done
 
 end
