@@ -33,7 +33,9 @@ function [Aircraft] = ATR42_600(Aircraft)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % define the targets (in m or min)
-Mission.Target.Valu = [UnitConversionPkg.ConvLength(703, "naut mi", "m"); UnitConversionPkg.ConvLength(150, "naut mi", "m"); 45];
+% Mission.Target.Valu = [UnitConversionPkg.ConvLength(703, "naut mi", "m"); UnitConversionPkg.ConvLength(150, "naut mi", "m"); 45];
+Mission.Target.Valu = [Aircraft.Specs.Performance.Range; UnitConversionPkg.ConvLength(150, "naut mi", "m"); 45];
+
 
 % define the target types ("Dist" or "Time")
 Mission.Target.Type = ["Dist"; "Dist"; "Time"];

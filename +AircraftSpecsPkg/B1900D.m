@@ -57,22 +57,22 @@ Aircraft.Specs.TLAR.MaxPax = 19;    % done
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
 % takeoff speed (m/s)
-Aircraft.Specs.Performance.Vels.Tko = ???; % to be updated
+Aircraft.Specs.Performance.Vels.Tko = 60; % to be updated
 
 % cruise  speed (mach)
-Aircraft.Specs.Performance.Vels.Crs = ???; % to be updated
+Aircraft.Specs.Performance.Vels.Crs = 0.48; % to be updated
 
 % takeoff altitude (m)
 Aircraft.Specs.Performance.Alts.Tko = 0; % done
 
 % cruise altitude (m)
-Aircraft.Specs.Performance.Alts.Crs = ???; % to be updated
+Aircraft.Specs.Performance.Alts.Crs = 6100; % to be updated
 
 % ** REQUIRED ** design range (m)
-Aircraft.Specs.Performance.Range = UnitConversionPkg.ConvLength(382, "naut mi", "m"); %done
+Aircraft.Specs.Performance.Range = UnitConversionPkg.ConvLength(382 + 100, "naut mi", "m"); %done
 
 % maximum rate-of-climb (m/s)
-Aircraft.Specs.Performance.RCMax = ???; % to be updated
+Aircraft.Specs.Performance.RCMax = NaN; % to be updated
 
 % ----------------------------------------------------------
 
@@ -83,13 +83,13 @@ Aircraft.Specs.Performance.RCMax = ???; % to be updated
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % lift-drag ratio at climb
-Aircraft.Specs.Aero.L_D.Clb = ???; % to be updated
+Aircraft.Specs.Aero.L_D.Clb = 10; % to be updated
 
 % lift-drag ratio at cruise
-Aircraft.Specs.Aero.L_D.Crs = ???; % to be updated
+Aircraft.Specs.Aero.L_D.Crs = 14; % to be updated
 
 % lift-drag ratio at descent
-Aircraft.Specs.Aero.L_D.Des = ???; % to be updated
+Aircraft.Specs.Aero.L_D.Des = 10; % to be updated
 
 % maximum wing loading (kg/m^2)
 Aircraft.Specs.Aero.W_S.SLS = 287;  % done
@@ -106,7 +106,7 @@ Aircraft.Specs.Aero.W_S.SLS = 287;  % done
 Aircraft.Specs.Weight.MTOW = 7815; %done 
 
 % block fuel (kg)
-Aircraft.Specs.Weight.Fuel = ??? % to be updated
+Aircraft.Specs.Weight.Fuel = 2000; % to be updated
 
 % landing weight (kg)
 Aircraft.Specs.Weight.MLW = NaN; % to be updated
@@ -139,10 +139,10 @@ Aircraft.Specs.Weight.EG = NaN; % to be updated
 Aircraft.Specs.Propulsion.Arch.Type = "C"; % done
 
 % aircraft thrust-weight ratio
-Aircraft.Specs.Propulsion.T_W.SLS = ???; % to be updated
+Aircraft.Specs.Propulsion.T_W.SLS = NaN; % to be updated
 
 % total sea level static thrust (N)
-Aircraft.Specs.Propulsion.Thrust.SLS = ???; % to be updated
+Aircraft.Specs.Propulsion.Thrust.SLS = NaN; % to be updated
 
 % engine propulSive efficiency
 Aircraft.Specs.Propulsion.Eta.Prop = 0.8; % to be updated
@@ -226,7 +226,9 @@ Aircraft.Settings.Analysis.Type = 1;
 % plot results
 % 0 = no plotting
 % 1 = plotting
-Aircraft.Settings.Plotting = NaN;
+Aircraft.Settings.Plotting = 1;
+
+Aircraft.Settings.Offtake = 0;
 
 % ----------------------------------------------------------
 

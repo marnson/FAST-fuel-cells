@@ -54,11 +54,11 @@ Aircraft.Specs.Performance.Vels.Type = 'TAS';
 Aircraft.Specs.Performance.Alts.Tko =     0;
 
 % cruise altitude (ft)
-Aircraft.Specs.Performance.Alts.Crs = UnitConversionPkg.ConvLength(35000,'ft','m')
+Aircraft.Specs.Performance.Alts.Crs = UnitConversionPkg.ConvLength(35000,'ft','m');
 
 % ** required **
 % design range (nmi)
-Aircraft.Specs.Performance.Range = 4815e3; % UnitConversionPkg.ConvLength(500,'naut mi','m');
+Aircraft.Specs.Performance.Range = 6296800; % UnitConversionPkg.ConvLength(500,'naut mi','m');
 
 % maximum rate of climb (ft/s), assumed 2,250 ft/min
 Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(2250/60,'ft','m');

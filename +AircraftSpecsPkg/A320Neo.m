@@ -58,7 +58,7 @@ Aircraft.Specs.Performance.Alts.Crs = UnitConversionPkg.ConvLength(35000,'ft','m
 
 % ** required **
 % design range (nmi)
-Aircraft.Specs.Performance.Range = 4815e3;
+Aircraft.Specs.Performance.Range = 6296800;
 
 % maximum rate of climb (ft/s), assumed 2,250 ft/min
 Aircraft.Specs.Performance.RCMax = UnitConversionPkg.ConvLength(2250/60,'ft','m');
@@ -131,8 +131,8 @@ Aircraft.Specs.Propulsion.Thrust.SLS = 2.37e5;
 % engine propulsive efficiency
 Aircraft.Specs.Propulsion.Eta.Prop = 0.8;
 
-Aircraft.Specs.Propulsion.MDotCF = 1.01;
-Aircraft.Specs.Weight.WairfCF = 1.01;
+Aircraft.Specs.Propulsion.MDotCF = 1;
+Aircraft.Specs.Weight.WairfCF = 1
 
 
 %% POWER %%
