@@ -236,7 +236,7 @@ Aircraft.Settings.Analysis.Type = +1;
 % 1 =    plotting
 Aircraft.Settings.Plotting = 1;
 
-Aircraft.Settings.Offtake = NaN;
+Aircraft.Settings.Offtake = 2;
 
 % ----------------------------------------------------------
 

@@ -170,13 +170,13 @@ Aircraft.Specs.Propulsion.PropArch.PSType = [0, 0, 2, 2];
 Aircraft.Specs.Propulsion.FuelCell = FuelCellPkg.FuelCellSpecsPkg.Example2050;
 
 
-Aircraft.Specs.Weight.WairfCF = 1.18;
+Aircraft.Specs.Weight.WairfCF = 1.05;
 
-Aircraft.Specs.Propulsion.FC_Oversize = 0.25;
+Aircraft.Specs.Propulsion.FC_Oversize = 0.88;
+
+Aircraft.Specs.Propulsion.MDotCF = 1.36;
 
 Aircraft.Settings.Offtake = 2;
-
-Aircraft.Specs.Weight.EtaTank = 0.65;
 % ----------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

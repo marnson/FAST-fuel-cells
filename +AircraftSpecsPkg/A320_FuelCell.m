@@ -102,9 +102,11 @@ Aircraft.Specs.Weight.Fuel = 19000;
 % battery weight (lbm), leave NaN for propulsion systems without batteries
 Aircraft.Specs.Weight.Batt = NaN;
 
-Aircraft.Specs.Weight.WairfCF = 1.35;
+Aircraft.Specs.Weight.WairfCF = 1.05;
 
-Aircraft.Specs.Propulsion.FC_Oversize = 1.02;
+Aircraft.Specs.Propulsion.FC_Oversize = 0.88;
+
+Aircraft.Specs.Propulsion.MDotCF = 1.36;
 
 %% PROPULSION %%
 %%%%%%%%%%%%%%%%

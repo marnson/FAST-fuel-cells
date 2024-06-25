@@ -76,29 +76,29 @@ save('EPP_Results/A320_Tuning.mat','ErrorTab')
 
 %% 1.C) B1900 Conventional Tuning
 
-
-clc; clear; close all;
-
-B19 = Main(AircraftSpecsPkg.B1900D,@MissionProfilesPkg.NotionalMission02);
-
-actuals = [7815,2022,4847];
-W = B19.Specs.Weight;
-FAST_Model = [W.MTOW, W.Fuel, W.OEW];
-
-err = (FAST_Model - actuals)./actuals.*100;
-
-
-Weight = ["MTOW","Fuel","OEW"]';
-
-ErrorTab = table(Weight, actuals', FAST_Model', err');
-ErrorTab.Properties.VariableNames(2) = "Literature";
-ErrorTab.Properties.VariableNames(3) = "FAST Model";
-ErrorTab.Properties.VariableNames(4) = "Error (%)";
-
-ErrorTab
-
-
-save('EPP_Results/B1900D_Tuning.mat','ErrorTab')
+% 
+% clc; clear; close all;
+% 
+% B19 = Main(AircraftSpecsPkg.B1900D,@MissionProfilesPkg.NotionalMission02);
+% 
+% actuals = [7815,2022,4847];
+% W = B19.Specs.Weight;
+% FAST_Model = [W.MTOW, W.Fuel, W.OEW];
+% 
+% err = (FAST_Model - actuals)./actuals.*100;
+% 
+% 
+% Weight = ["MTOW","Fuel","OEW"]';
+% 
+% ErrorTab = table(Weight, actuals', FAST_Model', err');
+% ErrorTab.Properties.VariableNames(2) = "Literature";
+% ErrorTab.Properties.VariableNames(3) = "FAST Model";
+% ErrorTab.Properties.VariableNames(4) = "Error (%)";
+% 
+% ErrorTab
+% 
+% 
+% save('EPP_Results/B1900D_Tuning.mat','ErrorTab')
 
 
 
@@ -107,6 +107,7 @@ save('EPP_Results/B1900D_Tuning.mat','ErrorTab')
 clear; clc; close all;
 CHEETA = UnitConversionPkg.ConvMass([1847.522594,15715.22337,10241.60151,15756.31001,129852.40 ,180608.7079, 129852.40 - 15715.22337],'lbm','kg');
 
+FuelCellPkg.FC_init(FuelCellPkg.FuelCellSpecsPkg.Example2050)
 
 CH = Main(AircraftSpecsPkg.CHEETA,@MissionProfilesPkg.NotionalMission02);
 W = CH.Specs.Weight;
@@ -126,7 +127,7 @@ ErrorTab.Properties.VariableNames(4) = "Error (%)";
 ErrorTab
 
 
-
+save('EPP_Results/CHEETA_Tuning.mat','ErrorTab','CH')
 
 %% 1.E) AEA Full Electric Baseline
 clear; clc; close all;
@@ -174,7 +175,7 @@ ACSpecs.Settings.Plotting = 0;
 % create grids
 % FC is power to weight and eta tank
 % Electric is propulsive efficiency and ebatt
-N = 3;
+N = 30;
 
 PW = 363*2.2/1.142.*linspace(0.7,1.5,N);
 EtaTank = linspace(0.65,1.5,N);
@@ -208,7 +209,7 @@ clear; clc; close all;
 % create grids
 % FC is power to weight and eta tank
 % Electric is propulsive efficiency and ebatt
-N = 3;
+N = 30;
 
 ebatt = linspace(2,5,N);
 etaprop = linspace(0.5,0.8,N);
@@ -248,7 +249,7 @@ ACSpecs.Settings.Plotting = 0;
 % create grids
 % FC is power to weight and eta tank
 % Electric is propulsive efficiency and ebatt
-N = 3;
+N = 30;
 
 PW = 363*2.2/1.142.*linspace(0.7,1.5,N);
 EtaTank = linspace(0.65,1.5,N);
@@ -281,7 +282,7 @@ clear; clc; close all;
 % create grids
 % FC is power to weight and eta tank
 % Electric is propulsive efficiency and ebatt
-N = 3;
+N = 30;
 
 ebatt = linspace(2,5,N);
 etaprop = linspace(0.5,0.8,N);
@@ -323,7 +324,7 @@ Specs = AircraftSpecsPkg.A320_FuelCell();
 Mission = @ MissionProfilesPkg.NotionalMission02;
 Specs.Settings.Plotting = 0;
 
-N = 15;
+N = 100;
 R_Nominal = Specs.Specs.Performance.Range;
 RangeGrid = linspace(0.3*R_Nominal,R_Nominal*2,N);
 
@@ -381,7 +382,7 @@ Specs = AircraftSpecsPkg.A320_Elec(EtaProp);
 Specs.Specs.Power.SpecEnergy.Batt = 3;
 Mission = @ MissionProfilesPkg.A320;
 
-N = 15;
+N = 100;
 R_Nominal = Specs.Specs.Performance.Range;
 RangeGrid = linspace(0.3*R_Nominal,R_Nominal*2,N);
 
@@ -442,7 +443,7 @@ Specs = AircraftSpecsPkg.ATR42_FuelCell();
 Mission = @ MissionProfilesPkg.NotionalMission02;
 Specs.Settings.Plotting = 0;
 
-N = 15;
+N = 100;
 R_Nominal = Specs.Specs.Performance.Range;
 RangeGrid = linspace(0.3*R_Nominal,R_Nominal*2,N);
 
@@ -501,7 +502,7 @@ Specs.Specs.Power.SpecEnergy.Batt = 3;
 Specs.Settings.Plotting = 0;
 Mission = @ MissionProfilesPkg.ATR42_600;
 
-N = 15;
+N = 100;
 R_Nominal = Specs.Specs.Performance.Range;
 RangeGrid = linspace(0.3*R_Nominal,R_Nominal*2,N);
 
@@ -564,46 +565,46 @@ save('EPP_Results/BRE_ATR_Elec.mat','Sized','RangeGrid','MBM_BRE','MBM_BRE_Norsv
 
 %% 4.A) Error Testing using fake AEA trade study
 
-clc; clear; close all;
-
-% N should be like 20 or 30 in a real case
-N = 4;
-
-% set 1d grids
-etas = linspace(0.5,0.8,N);
-ebatts = linspace(0.5,2,N);
-
-% meshgrid them
-[EtaGrid2,eBattGrid2] = meshgrid(etas,ebatts);
-
-% reshape input grids
-EtaGrid1 = reshape(EtaGrid2,[N^2 1]);
-eBattGrid1 = reshape(eBattGrid2,[N^2 1]);
-
-% initialize output grids
-FuelGrid1   = zeros(N^2,1);
-EnergyGrid1 = zeros(N^2,1);
-
-
-SpecFile = @ (x) AircraftSpecsPkg.AEA(x);
-MissionFile = @ MissionProfilesPkg.AEAProfile;
-
-
-% make sure this loop runs in parallel in a real case
-for ii = 1:N^2
-    [FuelGrid1(ii), EnergyGrid1(ii)] = RunElecAircraft(SpecFile,MissionFile,EtaGrid1(ii),eBattGrid1(ii));
-end
-
-% Reshape output grids
-FuelGrid2 = reshape(FuelGrid1,[N N]);
-EnergyGrid2 = reshape(EnergyGrid1,[N N]);
-
-% Save Results
-save('EPP_Results/AEATests.mat','EtaGrid2','eBattGrid2','FuelGrid2','EnergyGrid2')
-
-% example plots
-contourf(EtaGrid2,eBattGrid2,EnergyGrid2)
-
+% clc; clear; close all;
+% 
+% % N should be like 20 or 30 in a real case
+% N = 4;
+% 
+% % set 1d grids
+% etas = linspace(0.5,0.8,N);
+% ebatts = linspace(0.5,2,N);
+% 
+% % meshgrid them
+% [EtaGrid2,eBattGrid2] = meshgrid(etas,ebatts);
+% 
+% % reshape input grids
+% EtaGrid1 = reshape(EtaGrid2,[N^2 1]);
+% eBattGrid1 = reshape(eBattGrid2,[N^2 1]);
+% 
+% % initialize output grids
+% FuelGrid1   = zeros(N^2,1);
+% EnergyGrid1 = zeros(N^2,1);
+% 
+% 
+% SpecFile = @ (x) AircraftSpecsPkg.AEA(x);
+% MissionFile = @ MissionProfilesPkg.AEAProfile;
+% 
+% 
+% % make sure this loop runs in parallel in a real case
+% for ii = 1:N^2
+%     [FuelGrid1(ii), EnergyGrid1(ii)] = RunElecAircraft(SpecFile,MissionFile,EtaGrid1(ii),eBattGrid1(ii));
+% end
+% 
+% % Reshape output grids
+% FuelGrid2 = reshape(FuelGrid1,[N N]);
+% EnergyGrid2 = reshape(EnergyGrid1,[N N]);
+% 
+% % Save Results
+% save('EPP_Results/AEATests.mat','EtaGrid2','eBattGrid2','FuelGrid2','EnergyGrid2')
+% 
+% % example plots
+% contourf(EtaGrid2,eBattGrid2,EnergyGrid2)
+% 
 
 
 

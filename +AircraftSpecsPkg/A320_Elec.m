@@ -102,7 +102,7 @@ Aircraft.Specs.Weight.Fuel = 0;
 % battery weight (lbm), leave NaN for propulsion systems without batteries
 Aircraft.Specs.Weight.Batt = 36e3;
 
-Aircraft.Specs.Weight.WairfCF = 1.01;
+Aircraft.Specs.Weight.WairfCF = 1;
 
 
 %% PROPULSION %%
