@@ -177,6 +177,8 @@ Aircraft.Specs.Propulsion.FC_Oversize = 0.88;
 Aircraft.Specs.Propulsion.MDotCF = 1.36;
 
 Aircraft.Settings.Offtake = 2;
+
+Aircraft.Specs.Weight.EtaTank = 0.65;
 % ----------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

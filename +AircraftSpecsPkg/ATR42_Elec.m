@@ -204,7 +204,7 @@ Aircraft.Specs.Power.Eta.EM = 0.96;
 Aircraft.Specs.Power.Eta.EG = 0.96;
 
 % aircraft power-weight ratio (kW/kg)
-Aircraft.Specs.Power.P_W.SLS = 0.1731;
+Aircraft.Specs.Power.P_W.SLS = 0.1731*1.37;
 
 % electric motor power-weight ratio (kW/kg)
 Aircraft.Specs.Power.P_W.EM = NaN;
