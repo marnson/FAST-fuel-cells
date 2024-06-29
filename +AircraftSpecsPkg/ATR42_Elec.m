@@ -213,9 +213,9 @@ Aircraft.Specs.Power.P_W.EM = NaN;
 Aircraft.Specs.Power.P_W.EG = NaN;
 
 % battery cell configuration and initial SOC
-Aircraft.Specs.Power.Battery.SerCells = NaN;
-Aircraft.Specs.Power.Battery.ParCells = NaN;
-Aircraft.Specs.Power.Battery.BegSOC   = NaN;
+Aircraft.Specs.Power.Battery.SerCells = 50;
+Aircraft.Specs.Power.Battery.ParCells = 40;
+Aircraft.Specs.Power.Battery.BegSOC   = 100;
 
 % ----------------------------------------------------------
 

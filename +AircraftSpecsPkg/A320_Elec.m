@@ -245,7 +245,7 @@ Aircraft.Specs.Power.LamPSES.SLS = 0;
 
 % battery cells in series and parallel 
 Aircraft.Specs.Power.Battery.ParCells = 40; %100;
-Aircraft.Specs.Power.Battery.SerCells = 70;%2778;
+Aircraft.Specs.Power.Battery.SerCells = 50;%2778;
 
 % initial battery SOC
 Aircraft.Specs.Power.Battery.BegSOC = 100;%100;
@@ -267,7 +267,7 @@ Aircraft.Settings.OEW.MaxIter = 50;
 Aircraft.Settings.OEW.Tol = 0.001;
 
 % maximum number of iterations during aircraft sizing
-Aircraft.Settings.Analysis.MaxIter = 30;
+Aircraft.Settings.Analysis.MaxIter = 70;
 
 % analysis type, either:
 %     +1 for on -design mode (aircraft performance and sizing)

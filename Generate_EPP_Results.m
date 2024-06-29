@@ -175,9 +175,9 @@ ACSpecs.Settings.Plotting = 0;
 % create grids
 % FC is power to weight and eta tank
 % Electric is propulsive efficiency and ebatt
-N = 30;
+N = 20;
 
-PW = 363*2.2/1.142.*linspace(0.7,1.5,N);
+PW = 363*2.2/1.142.*linspace(1,2,N);
 EtaTank = linspace(0.65,1.5,N);
 
 [PWGrid,EtaGrid] = meshgrid(PW,EtaTank);
@@ -191,6 +191,7 @@ for ii = 1:N
         FuelCellPkg.FC_init(ACSpecs.Specs.Propulsion.FuelCell)
         SizedAC(ii,jj) = Main(ACSpecs,@MissionProfilesPkg.A320);
         EnergyGrid(ii,jj) = SizedAC(ii,jj).Mission.History.SI.Energy.E_ES(end);
+        FuelGrid(ii,jj) = SizedAC(ii,jj).Specs.Weight.Fuel;
     end
 end
 
@@ -198,7 +199,7 @@ end
 close all
 contourf(PWGrid,EtaGrid,EnergyGrid)
 
-save('EPP_Results/A320_FuelCell_Trade.mat','PWGrid','EtaGrid','EnergyGrid','SizedAC')
+save('EPP_Results/A320_FuelCell_Trade.mat','PWGrid','EtaGrid','EnergyGrid','FuelGrid','SizedAC')
 
 
 
@@ -209,9 +210,9 @@ clear; clc; close all;
 % create grids
 % FC is power to weight and eta tank
 % Electric is propulsive efficiency and ebatt
-N = 30;
+N = 20;
 
-ebatt = linspace(2,5,N);
+ebatt = linspace(3,5,N);
 etaprop = linspace(0.5,0.8,N);
 
 [eBattGrid,EtaGrid] = meshgrid(ebatt,etaprop);
@@ -249,9 +250,9 @@ ACSpecs.Settings.Plotting = 0;
 % create grids
 % FC is power to weight and eta tank
 % Electric is propulsive efficiency and ebatt
-N = 30;
+N = 20;
 
-PW = 363*2.2/1.142.*linspace(0.7,1.5,N);
+PW = 363*2.2/1.142.*linspace(1,2,N);
 EtaTank = linspace(0.65,1.5,N);
 
 [PWGrid,EtaGrid] = meshgrid(PW,EtaTank);
@@ -265,6 +266,7 @@ for ii = 1:N
         FuelCellPkg.FC_init(ACSpecs.Specs.Propulsion.FuelCell)
         SizedAC(ii,jj) = Main(ACSpecs,@MissionProfilesPkg.ATR42_600);
         EnergyGrid(ii,jj) = SizedAC(ii,jj).Mission.History.SI.Energy.E_ES(end);
+        FuelGrid(ii,jj) = SizedAC(ii,jj).Specs.Weight.Fuel;
     end
 end
 
@@ -272,7 +274,7 @@ end
 close all
 contourf(PWGrid,EtaGrid,EnergyGrid)
 
-save('EPP_Results/ATR_FuelCell_Trade.mat','PWGrid','EtaGrid','EnergyGrid','SizedAC')
+save('EPP_Results/ATR_FuelCell_Trade.mat','PWGrid','EtaGrid','EnergyGrid','FuelGrid','SizedAC')
 
 
 %% 2.D) Running Trady Study for ATR Battery
@@ -379,7 +381,7 @@ clear; clc; close all;
 EtaProp = 0.8;
 
 Specs = AircraftSpecsPkg.A320_Elec(EtaProp);
-Specs.Specs.Power.SpecEnergy.Batt = 3;
+Specs.Specs.Power.SpecEnergy.Batt = 4;
 Mission = @ MissionProfilesPkg.A320;
 
 N = 100;
