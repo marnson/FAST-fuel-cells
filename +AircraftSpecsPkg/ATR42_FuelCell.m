@@ -153,7 +153,7 @@ Aircraft.Specs.Propulsion.Oper.PSPS = @() Aircraft.Specs.Propulsion.PropArch.PSP
 Aircraft.Specs.Propulsion.Oper.PSES = @() Aircraft.Specs.Propulsion.PropArch.PSES;
 
 % thrust-power  source efficiency
-Aircraft.Specs.Propulsion.Eta.TSPS  = ones(2,4);
+Aircraft.Specs.Propulsion.Eta.TSPS  = [0.77, 1, 1, 1; 1, 0.77, 1, 1];
 
 % power -power  source efficiency
 Aircraft.Specs.Propulsion.Eta.PSPS  = ones(4);

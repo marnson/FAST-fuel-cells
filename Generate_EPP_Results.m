@@ -161,7 +161,7 @@ ErrorTab.Properties.VariableNames(4) = "Error (%)";
 
 ErrorTab
 
-
+save('EPP_Results/AEA_Tuning.mat','ErrorTab','AE')
 
 
 %% 2.A) Running Trade study for the A320 fuel cell
@@ -252,8 +252,8 @@ ACSpecs.Settings.Plotting = 0;
 % Electric is propulsive efficiency and ebatt
 N = 20;
 
-PW = 363*2.2/1.142.*linspace(1,2,N);
-EtaTank = linspace(0.65,1.5,N);
+PW = 363*2.2/1.142.*linspace(0.5,2.5,N);
+EtaTank = linspace(0.5,2,N);
 
 [PWGrid,EtaGrid] = meshgrid(PW,EtaTank);
 
@@ -267,6 +267,7 @@ for ii = 1:N
         SizedAC(ii,jj) = Main(ACSpecs,@MissionProfilesPkg.ATR42_600);
         EnergyGrid(ii,jj) = SizedAC(ii,jj).Mission.History.SI.Energy.E_ES(end);
         FuelGrid(ii,jj) = SizedAC(ii,jj).Specs.Weight.Fuel;
+        MTOWGrid(ii,jj) = SizedAC(ii,jj).Specs.Weight.MTOW;
     end
 end
 
@@ -274,7 +275,7 @@ end
 close all
 contourf(PWGrid,EtaGrid,EnergyGrid)
 
-save('EPP_Results/ATR_FuelCell_Trade.mat','PWGrid','EtaGrid','EnergyGrid','FuelGrid','SizedAC')
+save('EPP_Results/ATR_FuelCell_Trade.mat','PWGrid','EtaGrid','MTOWGrid','EnergyGrid','FuelGrid','SizedAC')
 
 
 %% 2.D) Running Trady Study for ATR Battery
@@ -284,9 +285,9 @@ clear; clc; close all;
 % create grids
 % FC is power to weight and eta tank
 % Electric is propulsive efficiency and ebatt
-N = 30;
+N = 20;
 
-ebatt = linspace(2,5,N);
+ebatt = linspace(2,4,N);
 etaprop = linspace(0.5,0.8,N);
 
 [eBattGrid,EtaGrid] = meshgrid(ebatt,etaprop);
@@ -300,6 +301,7 @@ for ii = 1:N
         ACSpecs.Specs.Power.SpecEnergy.Batt = eBattGrid(ii,jj);
         SizedAC(ii,jj) = Main(ACSpecs,@MissionProfilesPkg.ATR42_600);
         EnergyGrid(ii,jj) = SizedAC(ii,jj).Mission.History.SI.Energy.E_ES(end);
+        MTOWGrid(ii,jj) = SizedAC(ii,jj).Specs.Weight.MTOW;
     end
 end
 
@@ -307,7 +309,7 @@ end
 close all
 contourf(eBattGrid,EtaGrid,EnergyGrid)
 
-save('EPP_Results/ATR_Elec_Trade.mat','eBattGrid','EtaGrid','EnergyGrid','SizedAC')
+save('EPP_Results/ATR_Elec_Trade.mat','eBattGrid','EtaGrid','EnergyGrid','MTOWGrid','SizedAC')
 
 
 %% 2.E) Running Trade study for the B1900 fuel cell
@@ -441,13 +443,16 @@ clear; clc; close all;
 
 EtaProp = 0.8;
 
+
+FuelCellPkg.FC_init(FuelCellPkg.FuelCellSpecsPkg.Example2050)
+
 Specs = AircraftSpecsPkg.ATR42_FuelCell();
 Mission = @ MissionProfilesPkg.NotionalMission02;
 Specs.Settings.Plotting = 0;
 
-N = 100;
+N = 20;
 R_Nominal = Specs.Specs.Performance.Range;
-RangeGrid = linspace(0.3*R_Nominal,R_Nominal*2,N);
+RangeGrid = linspace(0.3*R_Nominal,R_Nominal*1.5,N);
 
 LD = Specs.Specs.Aero.L_D.Crs;
 eFuel = 33.33*3.6e6;
@@ -497,16 +502,16 @@ save('EPP_Results/BRE_ATR_FuelCell.mat','Sized','RangeGrid','MBM_BRE','MBM_BRE_N
 %% 3.D) BRE Comparison ATR Battery
 clear; clc; close all;
 
-EtaProp = 0.8;
+EtaProp = 0.6;
 
 Specs = AircraftSpecsPkg.ATR42_Elec(EtaProp);
-Specs.Specs.Power.SpecEnergy.Batt = 3;
+Specs.Specs.Power.SpecEnergy.Batt = 2.5;
 Specs.Settings.Plotting = 0;
 Mission = @ MissionProfilesPkg.ATR42_600;
 
-N = 100;
+N = 5;
 R_Nominal = Specs.Specs.Performance.Range;
-RangeGrid = linspace(0.3*R_Nominal,R_Nominal*2,N);
+RangeGrid = linspace(0.3*R_Nominal,R_Nominal*1.5,N);
 
 LD = Specs.Specs.Aero.L_D.Crs;
 eBatt = Specs.Specs.Power.SpecEnergy.Batt*3.6e6;

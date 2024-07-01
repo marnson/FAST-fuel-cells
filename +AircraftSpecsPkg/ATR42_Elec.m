@@ -236,6 +236,8 @@ Aircraft.Settings.Analysis.Type = +1;
 % 1 =    plotting
 Aircraft.Settings.Plotting = 1;
 
+Aircraft.Settings.Analysis.MaxIter = 100;
+
 Aircraft.Settings.Offtake = 2;
 
 % ----------------------------------------------------------
