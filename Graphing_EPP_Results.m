@@ -49,6 +49,8 @@ AEA = ErrorTab
 clear; clc; close all
 load('EPP_Results/ATR_FuelCell_Trade')
 EtaGrid = 1./(1+EtaGrid);
+PWGrid = UnitConversionPkg.ConvMass(PWGrid,'lbm','kg');
+PWGrid = 1000./PWGrid;
 
 ConvE2024 = 1.1236e+11; % J 
 ConvMTOW2024 = 18758; % kg
@@ -91,14 +93,14 @@ hold on
 [C,h] = contour(PWGrid,EtaGrid,EmissionGrid2024./ConvEmiss2024.*100,[100 100],'w','LineWidth',2,'ShowText','on','LabelFormat',@ (x) repmat("Breakeven",[1,length(x)]));
 clabel(C,h,'Color','w','FontName','Times','FontSize',10)
 ylabel('Gravimetric Fuel Tank Efficiency','FontName','Times','FontSize',10)
-xlabel('weight parameter  XXXXX','FontName','Times','FontSize',10)
+xlabel('Fuel Cell P/W [kW/kg]','FontName','Times','FontSize',10)
 colorbar
 title({'W2W Carbon Emissions Relative to','Notional Turboprop Aircraft [%]'},'FontName','Times','FontSize',10)
 ax = gca; 
 ax.FontSize = 10;
 ax.FontName = 'Times';
-xticks([349.65, 600:200:1600]);
-xticklabels({350, 600:200:1600});
+%xticks([349.65, 600:200:1600]);
+%xticklabels({350, 600:200:1600});
 
 subplot(1,2,2)
 contourf(PWGrid,EtaGrid,Cost2024./ConvCost2024.*100,'LineStyle','none')
@@ -106,14 +108,14 @@ hold on
 [C,h] = contour(PWGrid,EtaGrid,Cost2024./ConvCost2024.*100,[100 100],'w','LineWidth',2,'ShowText','on','LabelFormat',@ (x) repmat("Breakeven",[1,length(x)]));
 clabel(C,h,'Color','w','FontName','Times','FontSize',10)
 ylabel('Gravimetric Fuel Tank Efficiency','FontName','Times','FontSize',10)
-xlabel('weight parameter  XXXXX','FontName','Times','FontSize',10)
+xlabel('Fuel Cell P/W [kW/kg]','FontName','Times','FontSize',10)
 colorbar
 title({'Energy Cost Relative to','Notional Turboprop Aircraft [%]'},'FontName','Times','FontSize',10)
 ax = gca; 
 ax.FontSize = 10;
 ax.FontName = 'Times';
-xticks([349.65, 600:200:1600]);
-xticklabels({350, 600:200:1600});
+%xticks([349.65, 600:200:1600]);
+%xticklabels({350, 600:200:1600});
 
 
 
@@ -130,15 +132,15 @@ hold on
 [C,h] = contour(PWGrid,EtaGrid,EmissionGrid2035./ConvEmiss2035.*100,[100 100],'w','LineWidth',2,'ShowText','on','LabelFormat',@ (x) repmat("Breakeven",[1,length(x)]));
 clabel(C,h,'Color','w','FontName','Times','FontSize',10)
 ylabel('Gravimetric Fuel Tank Efficiency','FontName','Times','FontSize',10)
-xlabel('weight parameter  XXXXX','FontName','Times','FontSize',10)
+xlabel('Fuel Cell P/W [kW/kg]','FontName','Times','FontSize',10)
 colorbar
 title({'W2W Carbon Emissions Relative to','Advanced Turboprop Aircraft [%]'},'FontName','Times','FontSize',10)
 
 ax = gca; 
 ax.FontSize = 10;
 ax.FontName = 'Times';
-xticks([349.65, 600:200:1600]);
-xticklabels({350, 600:200:1600});
+%xticks([349.65, 600:200:1600]);
+%xticklabels({350, 600:200:1600});
 
 subplot(1,2,2)
 contourf(PWGrid,EtaGrid,Cost2035./ConvCost2035.*100,'LineStyle','none')
@@ -146,15 +148,15 @@ hold on
 [C,h] = contour(PWGrid,EtaGrid,Cost2035./ConvCost2035.*100,[100 100],'w','LineWidth',2,'ShowText','on','LabelFormat',@ (x) repmat("Breakeven",[1,length(x)]));
 clabel(C,h,'Color','w','FontName','Times','FontSize',10)
 ylabel('Gravimetric Fuel Tank Efficiency','FontName','Times','FontSize',10)
-xlabel('weight parameter  XXXXX','FontName','Times','FontSize',10)
+xlabel('Fuel Cell P/W [kW/kg]','FontName','Times','FontSize',10)
 colorbar
 title({'Energy Cost Relative to','Advanced Turboprop Aircraft [%]'},'FontName','Times','FontSize',10)
 
 ax = gca; 
 ax.FontSize = 10;
 ax.FontName = 'Times';
-xticks([349.65, 600:200:1600]);
-xticklabels({350, 600:200:1600});
+%xticks([349.65, 600:200:1600]);
+%xticklabels({350, 600:200:1600});
 
 set(gcf, 'Position', get(0, 'Screensize'));
 print(gcf,'EPP_Results/ATR_FuelCell_2035','-dpdf','-bestfit')
@@ -171,15 +173,15 @@ hold on
 [C,h] = contour(PWGrid,EtaGrid,Cost2050./ConvCost2035.*100,[100 100],'w','LineWidth',2,'ShowText','on','LabelFormat',@ (x) repmat("Breakeven",[1,length(x)]));
 clabel(C,h,'Color','w','FontName','Times','FontSize',10)
 ylabel('Gravimetric Fuel Tank Efficiency','FontName','Times','FontSize',10)
-xlabel('weight parameter  XXXXX','FontName','Times','FontSize',10)
+xlabel('Fuel Cell P/W [kW/kg]','FontName','Times','FontSize',10)
 colorbar
 title({'Energy Cost Relative to','Advanced Turboprop Aircraft [%]'},'FontName','Times','FontSize',10)
 
 ax = gca; 
 ax.FontSize = 10;
 ax.FontName = 'Times';
-xticks([349.65, 600:200:1600]);
-xticklabels({350, 600:200:1600});
+%xticks([349.65, 600:200:1600]);
+%xticklabels({350, 600:200:1600});
 
 set(gcf, 'Position', get(0, 'Screensize'));
 print(gcf,'EPP_Results/ATR_FuelCell_2050','-dpdf','-bestfit')
@@ -193,14 +195,14 @@ hold on
 [C,h] = contour(PWGrid,EtaGrid,MTOWGrid./ConvMTOW2024.*100,[100 100],'w','LineWidth',2,'ShowText','on','LabelFormat',@ (x) repmat("Breakeven",[1,length(x)]));
 clabel(C,h,'Color','w','FontName','Times','FontSize',10)
 ylabel('Gravimetric Fuel Tank Efficiency','FontName','Times','FontSize',10)
-xlabel('weight parameter  XXXXX','FontName','Times','FontSize',10)
+xlabel('Fuel Cell P/W [kW/kg]','FontName','Times','FontSize',10)
 colorbar
 title({'MTOW Relative to','Notional Turboprop Aircraft [%]'},'FontName','Times','FontSize',10)
 ax = gca; 
 ax.FontSize = 10;
 ax.FontName = 'Times';
-xticks([349.65, 600:200:1600]);
-xticklabels({350, 600:200:1600});
+%xticks([349.65, 600:200:1600]);
+%xticklabels({350, 600:200:1600});
 
 subplot(1,2,2)
 contourf(PWGrid,EtaGrid,EnergyGrid./ConvE2024.*100,'LineStyle','none')
@@ -208,14 +210,14 @@ hold on
 [C,h] = contour(PWGrid,EtaGrid,EnergyGrid./ConvE2024.*100,[100 100],'w','LineWidth',2,'ShowText','on','LabelFormat',@ (x) repmat("Breakeven",[1,length(x)]));
 clabel(C,h,'Color','w','FontName','Times','FontSize',10)
 ylabel('Gravimetric Fuel Tank Efficiency','FontName','Times','FontSize',10)
-xlabel('weight parameter  XXXXX','FontName','Times','FontSize',10)
+xlabel('Fuel Cell P/W [kW/kg]','FontName','Times','FontSize',10)
 colorbar
 title({'Total Energy Usage Relative to',' Notional Turboprop Aircraft [%]'},'FontName','Times','FontSize',10)
 ax = gca; 
 ax.FontSize = 10;
 ax.FontName = 'Times';
-xticks([349.65, 600:200:1600]);
-xticklabels({350, 600:200:1600});
+%xticks([349.65, 600:200:1600]);
+%xticklabels({350, 600:200:1600});
 
 set(gcf, 'Position', get(0, 'Screensize'));
 print(gcf,'EPP_Results/ATR_FuelCell_weights_modern','-dpdf','-bestfit')
@@ -229,14 +231,14 @@ hold on
 [C,h] = contour(PWGrid,EtaGrid,MTOWGrid./ConvMTOW2035.*100,[100 100],'w','LineWidth',2,'ShowText','on','LabelFormat',@ (x) repmat("Breakeven",[1,length(x)]));
 clabel(C,h,'Color','w','FontName','Times','FontSize',10)
 ylabel('Gravimetric Fuel Tank Efficiency','FontName','Times','FontSize',10)
-xlabel('weight parameter  XXXXX','FontName','Times','FontSize',10)
+xlabel('Fuel Cell P/W [kW/kg]','FontName','Times','FontSize',10)
 colorbar
 title({'MTOW Relative to','Advanced Turboprop Aircraft [%]'},'FontName','Times','FontSize',10)
 ax = gca; 
 ax.FontSize = 10;
 ax.FontName = 'Times';
-xticks([349.65, 600:200:1600]);
-xticklabels({350, 600:200:1600});
+%xticks([349.65, 600:200:1600]);
+%xticklabels({350, 600:200:1600});
 
 subplot(1,2,2)
 contourf(PWGrid,EtaGrid,EnergyGrid./ConvE2035.*100,'LineStyle','none')
@@ -244,14 +246,14 @@ hold on
 [C,h] = contour(PWGrid,EtaGrid,EnergyGrid./ConvE2035.*100,[100 100],'w','LineWidth',2,'ShowText','on','LabelFormat',@ (x) repmat("Breakeven",[1,length(x)]));
 clabel(C,h,'Color','w','FontName','Times','FontSize',10)
 ylabel('Gravimetric Fuel Tank Efficiency','FontName','Times','FontSize',10)
-xlabel('weight parameter  XXXXX','FontName','Times','FontSize',10)
+xlabel('Fuel Cell P/W [kW/kg]','FontName','Times','FontSize',10)
 colorbar
 title({'Total Energy Usage Relative to','Advanced Turboprop Aircraft [%]'},'FontName','Times','FontSize',10)
 ax = gca; 
 ax.FontSize = 10;
 ax.FontName = 'Times';
-xticks([349.65, 600:200:1600]);
-xticklabels({350, 600:200:1600});
+%xticks([349.65, 600:200:1600]);
+%xticklabels({350, 600:200:1600});
 
 set(gcf, 'Position', get(0, 'Screensize'));
 print(gcf,'EPP_Results/ATR_FuelCell_weights_future','-dpdf','-bestfit')
